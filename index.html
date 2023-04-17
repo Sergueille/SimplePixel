@@ -1,0 +1,88 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1.0">
+    <title>Document</title>
+
+    <link rel="stylesheet" href="default.css">
+    <link rel="stylesheet" href="index.css">
+
+    <script src="color.js" defer="defer"></script>
+    <script src="vec2.js" defer="defer"></script>
+    <script src="commands.js" defer="defer"></script>
+    <script src="colorSelect.js" defer="defer"></script>
+    <script src="undo.js" defer="defer"></script>
+    <script src="export.js" defer="defer"></script>
+    <script src="search.js" defer="defer"></script>
+    <script src="index.js" defer="defer"></script>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <div id="infobar">
+        <div id="info-left">
+            <input value="" placeholder="Type a command..." id="main-input">
+            <span id="info-left-text">Welcome!</span>
+        </div>
+        <div id="info-right">
+            Some info
+        </div>
+    </div>
+    <div id="panels-wrapper">
+        <div id="color-select" class="flex-row hidden panel">
+            <div class="color-view-container">
+                <div class="pos-relative">
+                    <canvas width="300" height="300" id="color-view">
+                    </canvas>
+                    <div id="color-knob"></div>
+                </div>
+                <input type="range" id="color-slider" class="alpha-bg" min="0" max="1" step="0.000001"></input>
+                <input type="range" id="alpha-slider" class="alpha-bg" min="0" max="1" step="0.000001"></input>
+            </div>
+            <div class="flex-flexible">
+                <div class="alpha-bg color-preview-wrapper">
+                    <div id="color-preview"></div>
+                </div>
+                <div class="flex-row margin">
+                    <span>#</span>
+                    <input value="00000000" id="hex-input" class="flex-flexible">
+                </div>
+                <div class="flex-row margin">
+                    <span class="flex-flexible">Hue:</span>
+                    <input value="0" id="color-h-input">
+                </div>
+                <div class="flex-row margin">
+                    <span class="flex-flexible">Saturation:</span>
+                    <input value="0" id="color-s-input">
+                </div>
+                <div class="flex-row margin">
+                    <span class="flex-flexible">Value:</span>
+                    <input value="1" id="color-v-input">
+                </div>
+                <div class="flex-row margin">
+                    <span class="flex-flexible">Alpha:</span>
+                    <input value="1" id="color-a-input">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="search-list" class="panel hidden">
+    </div>
+    <div id="export-panel" class="panel hidden">
+        <div class="margin">
+            <div>Exporter l'image</div>
+            <br>
+            <div class="flex-row">
+                <span>Format:</span>
+                <select id="export-format">
+                    <option value="0">.PNG</option>
+                    <option value="1">.JPEG</option>
+                    <option value="2">.WEBP</option>
+                    <option value="3">.GIF</option>
+                </select>
+            </div>
+            
+            <button class="prim" id="export-btn">Exporter</button>
+        </div>
+    </div>
+</body>
+</html>

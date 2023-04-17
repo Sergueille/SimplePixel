@@ -1,0 +1,19 @@
+{
+    "cSpell.words": [
+        "cmax",
+        "cmin",
+        "infobar",
+        "Infobar",
+        "Mult",
+        "munro",
+        "paintpot"
+    ],
+    "emeraldwalk.runonsave": {
+        "commands": [
+            {
+                "match": "\\.ts$",
+                "cmd": "tsc"
+            }
+        ]
+    }
+}

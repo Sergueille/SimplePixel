@@ -64,6 +64,8 @@ let currentColor = Color.FromRGB(1, 1, 1);
 let currentAltColor = Color.FromRGB(0, 0, 0, 0);
 let currentTool = Tool.free;
 
+let usePicker = false;
+
 let commandHistory: Command[] = [];
 
 // Initial theme
@@ -155,6 +157,11 @@ function OnMouseMove(event: MouseEvent)
     [lastMouseX, lastMouseY] = [mouseX, mouseY];
     [mouseX, mouseY] = ScreenToPixel(event.pageX, event.pageY);
     infoRight.innerHTML = `${mouseX}, ${mouseY}`;
+
+    if (usePicker)
+    {
+        Draw();
+    }
 }
 
 function OnMouseDown(event: MouseEvent) 
@@ -187,7 +194,19 @@ function OnMouseMoveCanvas()
 function OnMouseDownCanvas() 
 {
     CloseColorSelector();
-    setTimeout(() => ApplyMouseTools(true), 0);
+
+    if (usePicker)
+    {
+        if (IsInImage(mouseX, mouseY))
+            currentColor = imageData[mouseX + imageSizeX * mouseY];
+
+        usePicker = false;
+        Draw();
+    }
+    else
+    {
+        setTimeout(() => ApplyMouseTools(true), 0);
+    }
 }
 
 function OnMouseUpCanvas() 
@@ -331,12 +350,12 @@ function IsInImage(x, y)
 }
 
 // Top left of the pixel
-function PixelToScreen(x, y) : {x: number, y: number}
+function PixelToScreen(x, y) : [number, number]
 {
-    return {
-        x: cornerPosX + (x * settings.pixelSize),
-        y: cornerPosY + (y * settings.pixelSize),
-    }
+    return [
+        cornerPosX + (x * settings.pixelSize),
+        cornerPosY + (y * settings.pixelSize),
+    ]
 }
 
 function ScreenToPixel(x, y) : number[]
@@ -366,6 +385,16 @@ function Draw()
             }
         }
     }
+
+    if (usePicker && IsInImage(mouseX, mouseY))
+    {
+        let [screenX, screenY] = PixelToScreen(mouseX, mouseY);
+
+        ctx.strokeStyle = "#FF03F5";
+        ctx.beginPath();
+        ctx.rect(screenX, screenY, settings.pixelSize, settings.pixelSize);
+        ctx.stroke();
+    }
 }
 
 function DrawPixel(x: number, y: number, color: Color)
@@ -378,9 +407,9 @@ function DrawPixel(x: number, y: number, color: Color)
 
     let drawColor = color.AlphaBlendWith(bgColor);
 
-    let screenPos = PixelToScreen(x, y);
+    let [screenX, screenY] = PixelToScreen(x, y);
     ctx.fillStyle = drawColor.GetHex();
-    ctx.fillRect(screenPos.x - 0.5, screenPos.y - 0.5, settings.pixelSize + 1, settings.pixelSize + 1);
+    ctx.fillRect(screenX - 0.5, screenY - 0.5, settings.pixelSize + 1, settings.pixelSize + 1);
 }
 
 function SwitchTheme()

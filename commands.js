@@ -167,5 +167,8 @@ Command.commands = [
     new Command("export", control, "e", CommandType.function, null, "Export image as a file", (_) => {
         OpenExportPanel();
     }),
+    new Command("colorpicker", 0, "x", CommandType.function, null, "Select a color from the image and set the current color", (_) => {
+        usePicker = true;
+    }),
 ];
 //# sourceMappingURL=commands.js.map

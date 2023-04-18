@@ -54,6 +54,7 @@ let mouseStartPosY;
 let currentColor = Color.FromRGB(1, 1, 1);
 let currentAltColor = Color.FromRGB(0, 0, 0, 0);
 let currentTool = Tool.free;
+let usePicker = false;
 let commandHistory = [];
 // Initial theme
 let isDarkTheme = window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -128,6 +129,9 @@ function OnMouseMove(event) {
     [lastMouseX, lastMouseY] = [mouseX, mouseY];
     [mouseX, mouseY] = ScreenToPixel(event.pageX, event.pageY);
     infoRight.innerHTML = `${mouseX}, ${mouseY}`;
+    if (usePicker) {
+        Draw();
+    }
 }
 function OnMouseDown(event) {
     if (event.button == 0)
@@ -151,7 +155,15 @@ function OnMouseMoveCanvas() {
 }
 function OnMouseDownCanvas() {
     CloseColorSelector();
-    setTimeout(() => ApplyMouseTools(true), 0);
+    if (usePicker) {
+        if (IsInImage(mouseX, mouseY))
+            currentColor = imageData[mouseX + imageSizeX * mouseY];
+        usePicker = false;
+        Draw();
+    }
+    else {
+        setTimeout(() => ApplyMouseTools(true), 0);
+    }
 }
 function OnMouseUpCanvas() {
     ApplyMouseTools(false);
@@ -250,10 +262,10 @@ function IsInImage(x, y) {
 }
 // Top left of the pixel
 function PixelToScreen(x, y) {
-    return {
-        x: cornerPosX + (x * settings.pixelSize),
-        y: cornerPosY + (y * settings.pixelSize),
-    };
+    return [
+        cornerPosX + (x * settings.pixelSize),
+        cornerPosY + (y * settings.pixelSize),
+    ];
 }
 function ScreenToPixel(x, y) {
     return [
@@ -274,6 +286,13 @@ function Draw() {
             }
         }
     }
+    if (usePicker && IsInImage(mouseX, mouseY)) {
+        let [screenX, screenY] = PixelToScreen(mouseX, mouseY);
+        ctx.strokeStyle = "#FF03F5";
+        ctx.beginPath();
+        ctx.rect(screenX, screenY, settings.pixelSize, settings.pixelSize);
+        ctx.stroke();
+    }
 }
 function DrawPixel(x, y, color) {
     let bgColor;
@@ -282,9 +301,9 @@ function DrawPixel(x, y, color) {
     else
         bgColor = isDarkTheme ? settings.bgColorB : settings.bgColorBlight;
     let drawColor = color.AlphaBlendWith(bgColor);
-    let screenPos = PixelToScreen(x, y);
+    let [screenX, screenY] = PixelToScreen(x, y);
     ctx.fillStyle = drawColor.GetHex();
-    ctx.fillRect(screenPos.x - 0.5, screenPos.y - 0.5, settings.pixelSize + 1, settings.pixelSize + 1);
+    ctx.fillRect(screenX - 0.5, screenY - 0.5, settings.pixelSize + 1, settings.pixelSize + 1);
 }
 function SwitchTheme() {
     if (isDarkTheme) {

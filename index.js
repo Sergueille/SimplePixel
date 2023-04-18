@@ -44,6 +44,8 @@ let cornerPosX; // On screen
 let cornerPosY;
 let mouseX;
 let mouseY;
+let lastMouseX;
+let lastMouseY;
 let mouseLeft = false;
 let mouseRight = false;
 let mouseMiddle = false;
@@ -123,6 +125,7 @@ function OnResize() {
     Draw();
 }
 function OnMouseMove(event) {
+    [lastMouseX, lastMouseY] = [mouseX, mouseY];
     [mouseX, mouseY] = ScreenToPixel(event.pageX, event.pageY);
     infoRight.innerHTML = `${mouseX}, ${mouseY}`;
 }
@@ -160,7 +163,7 @@ function ApplyMouseTools(preview) {
     if (preview)
         Draw();
     if (currentTool == Tool.free) {
-        SetPixel(mouseX, mouseY, color);
+        SetLine(lastMouseX, lastMouseY, mouseX, mouseY, color);
     }
     else if (currentTool == Tool.line) {
         SetLine(mouseStartPosX, mouseStartPosY, mouseX, mouseY, color, preview);

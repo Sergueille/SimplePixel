@@ -51,6 +51,8 @@ let cornerPosY: number;
 
 let mouseX: number;
 let mouseY: number;
+let lastMouseX: number;
+let lastMouseY: number;
 
 let mouseLeft = false;
 let mouseRight = false;
@@ -150,6 +152,7 @@ function OnResize()
 
 function OnMouseMove(event: MouseEvent)
 {
+    [lastMouseX, lastMouseY] = [mouseX, mouseY];
     [mouseX, mouseY] = ScreenToPixel(event.pageX, event.pageY);
     infoRight.innerHTML = `${mouseX}, ${mouseY}`;
 }
@@ -203,7 +206,7 @@ function ApplyMouseTools(preview: boolean)
 
     if (currentTool == Tool.free)
     {
-        SetPixel(mouseX, mouseY, color);
+        SetLine(lastMouseX, lastMouseY, mouseX, mouseY, color);
     }
     else if (currentTool == Tool.line)
     {

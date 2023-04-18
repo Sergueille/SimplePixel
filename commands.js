@@ -127,7 +127,7 @@ Command.commands = [
     new Command("paintpot", 0, "p", CommandType.function, null, "Select paintpot tool", (_) => {
         currentTool = Tool.paintpot;
     }),
-    new Command("pxsize", 0, "", CommandType.int, 16, "Set the size of one pixel", (val) => {
+    new Command("pxsize", 0, "", CommandType.int, 16, "Set the screen size of one pixel", (val) => {
         settings.pixelSize = val;
         OnResize();
     }),
@@ -149,7 +149,7 @@ Command.commands = [
     new Command("setb", alt, "b", CommandType.float, 1, "Set the blue value of the current color (0 - 1)", (val) => {
         currentColor.b = val;
     }),
-    new Command("seta", alt, "b", CommandType.float, 1, "Set the alpha value of the current color (0 - 1)", (val) => {
+    new Command("seta", alt, "a", CommandType.float, 1, "Set the alpha value of the current color (0 - 1)", (val) => {
         currentColor.a = val;
     }),
     new Command("undo", control, "z", CommandType.function, null, "Undo last action", (_) => {

@@ -69,10 +69,10 @@
     </div>
     <div id="export-panel" class="panel hidden">
         <div class="margin">
-            <div>Exporter l'image</div>
+            <div>Export image:</div>
             <br>
-            <div class="flex-row">
-                <span>Format:</span>
+            <div class="flex-row margin">
+                <span class="flex-flexible">File format:</span>
                 <select id="export-format">
                     <option value="0">.PNG</option>
                     <option value="1">.JPEG</option>
@@ -80,8 +80,14 @@
                     <option value="3">.GIF</option>
                 </select>
             </div>
+            <div class="flex-row margin">
+                <span class="flex-flexible">
+                    Crop transparent:
+                </span>
+                <input id="export-crop" type="checkbox">
+            </div>
             
-            <button class="prim" id="export-btn">Exporter</button>
+            <button class="prim" id="export-btn">Export</button>
         </div>
     </div>
 </body>

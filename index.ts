@@ -20,6 +20,7 @@ let colorSelectKnob = document.getElementById("color-knob")!!;
 let exportPanel = document.getElementById("export-panel")!!;
 let exportButton = document.getElementById("export-btn")!!;
 let exportFormatSelect = document.getElementById("export-format") as HTMLSelectElement;
+let exportCropAlpha = document.getElementById("export-crop") as HTMLInputElement;
 
 enum Tool {
     free, line, paintpot
@@ -29,7 +30,7 @@ const infobarSize = 27; // px
 
 let settings = {
     pixelSize: 16,
-    bgColorA: Color.FromHSV(0, 0, .15),
+    bgColorA: Color.FromHSV(0, 0, .10),
     bgColorB: Color.FromHSV(0, 0, .05),
     bgColorAlight: Color.FromHSV(0, 0, 1),
     bgColorBlight: Color.FromHSV(0, 0, .9),

@@ -11,16 +11,51 @@ function CloseExportPanel()
 
 function ExportImage()
 {
+    let sizeX = imageSizeX;
+    let sizeY = imageSizeY;
+    let startX = 0;
+    let startY = 0;
+    if (exportCropAlpha.checked) {
+        let minX = imageSizeX;
+        let maxX = 0;
+        let minY = imageSizeY;
+        let maxY = 0;
+
+        for (let x = 0; x < imageSizeX; x++)
+        {
+            for (let y = 0; y < imageSizeY; y++)
+            {
+                if (imageData[x + imageSizeX * y].a > 0.01)
+                {
+                    minX = Math.min(x, minX);
+                    maxX = Math.max(x, maxX);
+                    minY = Math.min(y, minY);
+                    maxY = Math.max(y, maxY);       
+                }
+            }
+        }
+
+        console.log(minX, maxX, minY, maxY);
+
+        if (minX <= maxX && minY <= maxY)
+        {
+            startX = minX;
+            startY = minY;
+            sizeX = maxX - minX + 1;
+            sizeY = maxY - minY + 1;
+        }
+    }
+
     let canvas = document.createElement("canvas");
-    canvas.width = imageSizeX;
-    canvas.height = imageSizeY;
+    canvas.width = sizeX;
+    canvas.height = sizeY;
 
     let ctx = canvas.getContext("2d")!!;
-    for (let x = 0; x < imageSizeX; x++)
+    for (let x = 0; x < sizeX; x++)
     {
-        for (let y = 0; y < imageSizeY; y++)
+        for (let y = 0; y < sizeY; y++)
         {
-            ctx.fillStyle = imageData[x + imageSizeX * y].GetHex();
+            ctx.fillStyle = imageData[(x + startX) + imageSizeX * (y + startY)].GetHex();
             ctx.fillRect(x, y, 1, 1);
         }
     }

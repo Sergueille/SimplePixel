@@ -65,6 +65,45 @@ button.delete:hover, .btn.delete:hover {
     background-color: var(--red);
 }
 
+input[type="checkbox"]{
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: transparent;
+    font: inherit;
+    color: currentColor;
+    width: calc(9 * var(--pixel));
+    height: calc(9 * var(--pixel));
+    border: var(--pixel) solid var(--txt-d);
+    border-radius: 0;
+
+    position: relative;
+}
+
+input[type="checkbox"]::before {
+    content: "";
+    position: absolute;
+    left: calc(1 * var(--pixel));
+    top: calc(1 * var(--pixel));
+    width: calc(5 * var(--pixel));
+    height: calc(5 * var(--pixel));
+    background-color: var(--txt-d);
+    transform: scale(0);
+    transition: 120ms;
+}
+
+input[type="checkbox"]:checked::before {
+    transform: scale(1);
+}
+
+input[type="checkbox"]:hover, input[type="checkbox"]:focus-visible, input[type="checkbox"]:focus {
+    box-shadow: none;
+    border-color: var(--prim);
+}
+
+input[type="checkbox"]:hover::before, input[type="checkbox"]:focus-visible::before, input[type="checkbox"]:focus::before {
+    background-color: var(--prim);
+}
+
 *::selection {
     background-color: var(--prim);
 }

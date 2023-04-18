@@ -18,6 +18,7 @@ let colorSelectKnob = document.getElementById("color-knob");
 let exportPanel = document.getElementById("export-panel");
 let exportButton = document.getElementById("export-btn");
 let exportFormatSelect = document.getElementById("export-format");
+let exportCropAlpha = document.getElementById("export-crop");
 var Tool;
 (function (Tool) {
     Tool[Tool["free"] = 0] = "free";
@@ -27,7 +28,7 @@ var Tool;
 const infobarSize = 27; // px
 let settings = {
     pixelSize: 16,
-    bgColorA: Color.FromHSV(0, 0, .15),
+    bgColorA: Color.FromHSV(0, 0, .10),
     bgColorB: Color.FromHSV(0, 0, .05),
     bgColorAlight: Color.FromHSV(0, 0, 1),
     bgColorBlight: Color.FromHSV(0, 0, .9),

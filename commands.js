@@ -110,7 +110,7 @@ Command.commands = [
         CreateImage(imageSizeX, imageSizeY);
     }),
     new Command("imgsize", 0, "", CommandType.vec2, new vec2(50, 50), "Set size of image", (vec) => {
-        CreateImage(vec.x, vec.y);
+        CreateImage(vec.x, vec.y, true);
     }),
     new Command("color", 0, "c", CommandType.function, null, "Set the current color", (_) => {
         OpenColorSelector((newColor) => { currentColor = newColor; }, currentColor);

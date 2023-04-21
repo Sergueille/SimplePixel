@@ -1,5 +1,5 @@
 
-let undoStack: Color[][];
+let undoStack: UndoEntry[];
 let undoPosition: number
 
 function InitUndo()
@@ -14,7 +14,7 @@ function RecordUndo()
     if (undoPosition + 1 < undoStack.length)
         undoStack = undoStack.slice(0, undoPosition + 1);
 
-    undoStack.push([...imageData]);
+    undoStack.push(UndoEntry.Get());
     undoPosition++;
 }
 
@@ -23,9 +23,7 @@ function Undo()
     if (undoPosition <= 0) return;
 
     undoPosition--;
-    imageData = [...undoStack[undoPosition]];
-
-    Draw();
+    undoStack[undoPosition].Set();
 }
 
 function Redo()
@@ -33,7 +31,29 @@ function Redo()
     if (undoPosition >= undoStack.length - 1) return;
 
     undoPosition++;
-    imageData = [...undoStack[undoPosition]];
+    undoStack[undoPosition].Set();
+}
 
-    Draw();
+class UndoEntry
+{
+    public data: Color[];
+    public sizeX: number;
+    public sizeY: number;
+
+    public static Get() : UndoEntry
+    {
+        let res = new UndoEntry();
+        res.data = [...imageData];
+        res.sizeX = imageSizeX;
+        res.sizeY = imageSizeY;
+        return res;
+    }
+
+    public Set()
+    {
+        imageData = [...this.data];
+        imageSizeX = this.sizeX;
+        imageSizeY = this.sizeY;
+        Draw();
+    }
 }

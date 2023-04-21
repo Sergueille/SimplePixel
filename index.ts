@@ -127,12 +127,44 @@ exportButton.addEventListener("click", () => {
 
 OnResize();
 
-function CreateImage(sizeX: number, sizeY: number)
+function CreateImage(sizeX: number, sizeY: number, keepOldData = false)
 {
+    let oldData;
+    if (keepOldData)
+        oldData = [...imageData];
+    let oldSizeX = imageSizeX;
+    let oldSizeY = imageSizeY;
+
     imageSizeX = sizeX;
     imageSizeY = sizeY;
     imageData = new Array(imageSizeX * imageSizeY);
     imageData.fill(Color.FromRGB(0, 0, 0, 0));
+
+    if (keepOldData)
+    {
+        let startX = Math.round(Math.abs(oldSizeX - sizeX) / 2);
+        let endX = startX + Math.min(oldSizeX, sizeX);
+        let oldSmallerX = oldSizeX < sizeX;
+
+        let startY = Math.round(Math.abs(oldSizeY - sizeY) / 2);
+        let endY = startY + Math.min(oldSizeY, sizeY);
+        let oldSmallerY = oldSizeY < sizeY;
+
+        for (let x = startX; x < endX; x++)
+        {
+            for (let y = startY; y < endY; y++)
+            {
+                let oldX = oldSmallerX ? x - startX : x;
+                let oldY = oldSmallerY ? y - startY : y;
+
+                let newX = oldSmallerX ? x : x - startX;
+                let newY = oldSmallerY ? y : y - startY;
+
+                imageData[newX + newY * imageSizeX] = oldData[oldX + oldY * oldSizeX];
+            }
+        }
+    }
+
     OnResize();
     RecordUndo();
 }
@@ -145,9 +177,6 @@ function OnResize()
     canvas.setAttribute("height", height.toString());
     canvasPixelSizeX = Math.floor(width / settings.pixelSize);
     canvasPixelSizeY = Math.floor(height / settings.pixelSize);
-
-    cornerPosX = width / 2 - imageSizeX * settings.pixelSize / 2;
-    cornerPosY = height / 2 - imageSizeY * settings.pixelSize / 2;
 
     Draw();
 }
@@ -368,6 +397,9 @@ function ScreenToPixel(x, y) : number[]
 
 function Draw()
 {
+    cornerPosX = window.innerWidth / 2 - imageSizeX * settings.pixelSize / 2;
+    cornerPosY = (window.innerHeight - infobarSize) / 2 - imageSizeY * settings.pixelSize / 2;
+
     let startX = -(canvasPixelSizeX - imageSizeX) / 2 - 1;
     let startY = -(canvasPixelSizeX - imageSizeX) / 2 - 1;
 

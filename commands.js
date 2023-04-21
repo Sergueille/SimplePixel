@@ -103,7 +103,7 @@ Command.commands = [
         CloseColorSelector();
         CloseExportPanel();
     }),
-    new Command("clear", shift | alt, "N", CommandType.function, null, "Clear image", (_) => {
+    new Command("clear", shift | alt, "n", CommandType.function, null, "Clear image", (_) => {
         CreateImage(imageSizeX, imageSizeY);
     }),
     new Command("imgsize", 0, "", CommandType.vec2, new vec2(50, 50), "Set size of image", (vec) => {
@@ -155,7 +155,7 @@ Command.commands = [
     new Command("redo", control, "y", CommandType.function, null, "Redo last action", (_) => {
         Redo();
     }),
-    new Command("redoshiftz", control | shift, "Z", CommandType.function, null, "Redo last action, but with ctrl+shift+Z", (_) => {
+    new Command("redoshiftz", control | shift, "z", CommandType.function, null, "Redo last action, but with ctrl+shift+Z", (_) => {
         Redo();
     }),
     new Command("theme", alt, "t", CommandType.function, null, "Switch between light and dark themes", (_) => {
@@ -173,7 +173,7 @@ Command.commands = [
         gridSizeY = vec.y;
         Draw();
     }),
-    new Command("nogrid", control + shift, "G", CommandType.function, null, "Hide the grid", (_) => {
+    new Command("nogrid", control | shift, "g", CommandType.function, null, "Hide the grid", (_) => {
         useGrid = false;
         Draw();
     }),

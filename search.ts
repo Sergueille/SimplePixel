@@ -89,7 +89,7 @@ function OnKeyPressed(event: KeyboardEvent)
     let focusedOnInput = document.activeElement instanceof HTMLInputElement;
     if (modifier == 0 && focusedOnInput && event.key != "Escape") return;
 
-    let command = GetCommandByHotkey(modifier, event.key);
+    let command = GetCommandByHotkey(modifier, event.key.toLowerCase());
 
     if (command != null)
     {

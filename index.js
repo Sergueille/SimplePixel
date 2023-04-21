@@ -296,10 +296,10 @@ function ScreenToPixel(x, y) {
 function Draw() {
     cornerPosX = window.innerWidth / 2 - imageSizeX * settings.pixelSize / 2;
     cornerPosY = (window.innerHeight - infobarSize) / 2 - imageSizeY * settings.pixelSize / 2;
-    let startX = -(canvasPixelSizeX - imageSizeX) / 2 - 1;
-    let startY = -(canvasPixelSizeX - imageSizeX) / 2 - 1;
-    for (let x = startX; x < canvasPixelSizeX + 1; x++) {
-        for (let y = startY; y < canvasPixelSizeY + 1; y++) {
+    let startX = Math.floor(-(canvasPixelSizeX - imageSizeX) / 2 - 1);
+    let startY = Math.floor(-(canvasPixelSizeY - imageSizeY) / 2 - 1);
+    for (let x = startX; x < startX + canvasPixelSizeX + 2; x++) {
+        for (let y = startY; y < startY + canvasPixelSizeY + 2; y++) {
             if (IsInImage(x, y)) {
                 DrawPixel(x, y, GetPixel(x, y));
             }

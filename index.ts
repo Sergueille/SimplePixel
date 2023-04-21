@@ -60,7 +60,7 @@ let mouseMiddle = false;
 let mouseStartPosX: number; // In pixels
 let mouseStartPosY: number;
 
-let currentColor = Color.FromRGB(1, 1, 1);
+let currentColor: Color;
 let currentAltColor = Color.FromRGB(0, 0, 0, 0);
 let currentTool = Tool.free;
 
@@ -75,6 +75,11 @@ let gridSizeY = 16;
 // Initial theme
 let isDarkTheme = window.matchMedia("(prefers-color-scheme: dark)").matches;
 document.body.setAttribute("theme", isDarkTheme ? "dark" : "light");
+
+if (isDarkTheme)
+    currentColor = Color.FromRGB(1, 1, 1);
+else
+    currentColor = Color.FromRGB(0, 0, 0);
 
 canvas.addEventListener("contextmenu", event => event.preventDefault());
 

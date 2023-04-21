@@ -51,7 +51,7 @@ let mouseRight = false;
 let mouseMiddle = false;
 let mouseStartPosX; // In pixels
 let mouseStartPosY;
-let currentColor = Color.FromRGB(1, 1, 1);
+let currentColor;
 let currentAltColor = Color.FromRGB(0, 0, 0, 0);
 let currentTool = Tool.free;
 let usePicker = false;
@@ -62,6 +62,10 @@ let gridSizeY = 16;
 // Initial theme
 let isDarkTheme = window.matchMedia("(prefers-color-scheme: dark)").matches;
 document.body.setAttribute("theme", isDarkTheme ? "dark" : "light");
+if (isDarkTheme)
+    currentColor = Color.FromRGB(1, 1, 1);
+else
+    currentColor = Color.FromRGB(0, 0, 0);
 canvas.addEventListener("contextmenu", event => event.preventDefault());
 InitUndo();
 CreateImage(50, 50);

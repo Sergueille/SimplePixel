@@ -46,23 +46,25 @@ function OnSearchKey(event)
                 {
                     if (command.type == CommandType.int) [parameter, ok] = TryParseInt(values[1]);
                     if (command.type == CommandType.float) [parameter, ok] = TryParseFloat(values[1]);
-                    if (command.type == CommandType.color)
-                    {
-                        // TODO
-                    }
                     if (command.type == CommandType.vec2)
                     {
-                        if (values.length < 3) 
+                        if (values.length == 2) 
                         {
-                            infoLeft.textContent = "You need to specify a vector 2 argument for this command! Example: commandname [x] [y]"
-                            ok = false;
+                            let val;
+                            [val, ok] = TryParseInt(values[1]);
+                            parameter = new vec2(val, val);
                         }
-                        else
+                        else if (values.length == 3)
                         {
                             let x, y;
                             [x, ok] = TryParseInt(values[1]);
                             [y, ok] = TryParseInt(values[2]);
                             parameter = new vec2(x, y);
+                        }
+                        else 
+                        {
+                            infoLeft.textContent = "You need to specify a vector 2 argument for this command! Example: commandname [x] [y]"
+                            ok = false;
                         }
                     }
                 }

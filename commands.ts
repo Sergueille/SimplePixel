@@ -1,6 +1,6 @@
 enum CommandType
 {
-    function, int, float, color, vec2
+    function, int, float, vec2
 }
 
 const control = 1;
@@ -192,7 +192,6 @@ class Command
 
     private GetTypeString() : string
     {
-        if (this.type == CommandType.color) return "(Color)";
         if (this.type == CommandType.float) return "(Float)";
         if (this.type == CommandType.int) return "(Int)";
         if (this.type == CommandType.vec2) return "(Vector2)";

@@ -3,8 +3,7 @@ var CommandType;
     CommandType[CommandType["function"] = 0] = "function";
     CommandType[CommandType["int"] = 1] = "int";
     CommandType[CommandType["float"] = 2] = "float";
-    CommandType[CommandType["color"] = 3] = "color";
-    CommandType[CommandType["vec2"] = 4] = "vec2";
+    CommandType[CommandType["vec2"] = 3] = "vec2";
 })(CommandType || (CommandType = {}));
 const control = 1;
 const alt = 2;
@@ -83,8 +82,6 @@ class Command {
         return `<div class="command-hotkey">${res}<span class='key'>${keyName}</span></div>`;
     }
     GetTypeString() {
-        if (this.type == CommandType.color)
-            return "(Color)";
         if (this.type == CommandType.float)
             return "(Float)";
         if (this.type == CommandType.int)

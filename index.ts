@@ -68,6 +68,10 @@ let usePicker = false;
 
 let commandHistory: Command[] = [];
 
+let useGrid = false;
+let gridSizeX = 16;
+let gridSizeY = 16;
+
 // Initial theme
 let isDarkTheme = window.matchMedia("(prefers-color-scheme: dark)").matches;
 document.body.setAttribute("theme", isDarkTheme ? "dark" : "light");
@@ -423,9 +427,32 @@ function Draw()
         let [screenX, screenY] = PixelToScreen(mouseX, mouseY);
 
         ctx.strokeStyle = "#FF03F5";
+        ctx.lineWidth = 2;
         ctx.beginPath();
         ctx.rect(screenX, screenY, settings.pixelSize, settings.pixelSize);
         ctx.stroke();
+    }
+
+    if (useGrid)
+    {
+        ctx.strokeStyle = "#8885";
+        ctx.lineWidth = 2;
+
+        for (let x = gridSizeX; x < imageSizeX; x += gridSizeX)
+        {
+            ctx.beginPath();
+            ctx.moveTo(cornerPosX + x * settings.pixelSize - 1, cornerPosY - 1);
+            ctx.lineTo(cornerPosX + x * settings.pixelSize - 1, cornerPosY + imageSizeY * settings.pixelSize - 1);
+            ctx.stroke();
+        }
+        
+        for (let y = gridSizeY; y < imageSizeY; y += gridSizeY)
+        {
+            ctx.beginPath();
+            ctx.moveTo(cornerPosX - 1, cornerPosY + y * settings.pixelSize - 1);
+            ctx.lineTo(cornerPosX + imageSizeX * settings.pixelSize - 1, cornerPosY + y * settings.pixelSize - 1);
+            ctx.stroke();
+        }
     }
 }
 

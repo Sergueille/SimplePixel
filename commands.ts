@@ -85,6 +85,16 @@ class Command
         new Command("colorpicker", 0, "x", CommandType.function, null, "Select a color from the image and set the current color", (_) => {
             usePicker = true;
         }),
+        new Command("grid", control, "g", CommandType.vec2, new vec2(16, 16), "Displays a grid of the specified size", (vec) => {
+            useGrid = true;
+            gridSizeX = vec.x;
+            gridSizeY = vec.y;
+            Draw();
+        }),
+        new Command("nogrid", control + shift, "G", CommandType.function, null, "Hide the grid", (_) => {
+            useGrid = false;
+            Draw();
+        }),
     ]
 
     public name: string;

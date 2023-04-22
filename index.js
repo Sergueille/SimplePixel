@@ -26,6 +26,8 @@ var Tool;
     Tool[Tool["free"] = 0] = "free";
     Tool[Tool["line"] = 1] = "line";
     Tool[Tool["paintpot"] = 2] = "paintpot";
+    Tool[Tool["rect"] = 3] = "rect";
+    Tool[Tool["filledRect"] = 4] = "filledRect";
 })(Tool || (Tool = {}));
 const infobarSize = 27; // px
 let settings = {
@@ -215,6 +217,19 @@ function ApplyMouseTools(preview) {
     else if (currentTool == Tool.paintpot) {
         PaintPot(mouseX, mouseY, color, preview);
     }
+    else if (currentTool == Tool.rect) {
+        SetLine(mouseStartPosX, mouseStartPosY, mouseX, mouseStartPosY, color, preview);
+        SetLine(mouseX, mouseStartPosY, mouseX, mouseY, color, preview);
+        SetLine(mouseX, mouseY, mouseStartPosX, mouseY, color, preview);
+        SetLine(mouseStartPosX, mouseY, mouseStartPosX, mouseStartPosY, color, preview);
+    }
+    else if (currentTool == Tool.filledRect) {
+        let startX = Math.min(mouseStartPosX, mouseX);
+        let startY = Math.min(mouseStartPosY, mouseY);
+        let sizeX = Math.max(mouseStartPosX, mouseX) - startX;
+        let sizeY = Math.max(mouseStartPosY, mouseY) - startY;
+        SetRect(startX, startY, sizeX, sizeY, color, preview);
+    }
     if (!preview) {
         RecordUndo();
         Draw();
@@ -279,10 +294,10 @@ function PaintPot(startX, startY, color, temp = false) {
         }
     }
 }
-function DrawRect(x, y, sizeX, sizeY, color) {
-    for (let xx = x; xx < sizeX; xx++) {
-        for (let yy = y; yy < sizeY; yy++) {
-            SetPixel(xx, yy, color);
+function SetRect(x, y, sizeX, sizeY, color, preview = false) {
+    for (let xx = x; xx < x + sizeX; xx++) {
+        for (let yy = y; yy < y + sizeY; yy++) {
+            SetPixel(xx, yy, color, preview);
         }
     }
 }

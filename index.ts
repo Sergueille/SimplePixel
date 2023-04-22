@@ -25,7 +25,7 @@ let exportTile = document.getElementById("export-tile") as HTMLInputElement;
 let exportFilename = document.getElementById("export-name") as HTMLInputElement;
 
 enum Tool {
-    free, line, paintpot
+    free, line, paintpot, rect, filledRect
 }
 
 const infobarSize = 27; // px
@@ -278,6 +278,22 @@ function ApplyMouseTools(preview: boolean)
     {
         PaintPot(mouseX, mouseY, color, preview);
     }
+    else if (currentTool == Tool.rect)
+    {
+        SetLine(mouseStartPosX, mouseStartPosY, mouseX, mouseStartPosY, color, preview);
+        SetLine(mouseX, mouseStartPosY, mouseX, mouseY, color, preview);
+        SetLine(mouseX, mouseY, mouseStartPosX, mouseY, color, preview);
+        SetLine(mouseStartPosX, mouseY, mouseStartPosX, mouseStartPosY, color, preview);
+    }
+    else if (currentTool == Tool.filledRect)
+    {
+        let startX = Math.min(mouseStartPosX, mouseX);
+        let startY = Math.min(mouseStartPosY, mouseY);
+        let sizeX = Math.max(mouseStartPosX, mouseX) - startX;
+        let sizeY = Math.max(mouseStartPosY, mouseY) - startY;
+
+        SetRect(startX, startY, sizeX, sizeY, color, preview);
+    }
 
     if (!preview)
     {
@@ -371,13 +387,13 @@ function PaintPot(startX: number, startY: number, color: Color, temp = false)
     }   
 }
 
-function DrawRect(x: number, y: number, sizeX: number, sizeY: number, color: Color)
+function SetRect(x: number, y: number, sizeX: number, sizeY: number, color: Color, preview = false)
 {
-    for (let xx = x; xx < sizeX; xx++)
+    for (let xx = x; xx < x + sizeX; xx++)
     {
-        for (let yy = y; yy < sizeY; yy++)
+        for (let yy = y; yy < y + sizeY; yy++)
         {
-            SetPixel(xx, yy, color);
+            SetPixel(xx, yy, color, preview);
         }
     }
 }

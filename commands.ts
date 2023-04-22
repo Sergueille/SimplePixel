@@ -42,6 +42,12 @@ class Command
         new Command("paintpot", 0, "p", CommandType.function, null, "Select paintpot tool", (_) => {
             currentTool = Tool.paintpot;
         }),
+        new Command("rect", 0, "r", CommandType.function, null, "Select rect tool", (_) => {
+            currentTool = Tool.rect;
+        }),
+        new Command("filledrect", alt, "r", CommandType.function, null, "Select filled rect tool", (_) => {
+            currentTool = Tool.filledRect;
+        }),
         new Command("pxsize", 0, "", CommandType.int, 16, "Set the screen size of one pixel", (val) => {
             settings.pixelSize = val;
             OnResize();

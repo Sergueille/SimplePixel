@@ -116,19 +116,19 @@ Command.commands = [
         OpenColorSelector((newColor) => { currentAltColor = newColor; }, currentAltColor);
     }),
     new Command("free", 0, "f", CommandType.function, null, "Select free draw tool", (_) => {
-        currentTool = Tool.free;
+        SetTool(Tool.free);
     }),
     new Command("line", 0, "l", CommandType.function, null, "Select line tool", (_) => {
-        currentTool = Tool.line;
+        SetTool(Tool.line);
     }),
     new Command("paintpot", 0, "p", CommandType.function, null, "Select paintpot tool", (_) => {
-        currentTool = Tool.paintpot;
+        SetTool(Tool.paintpot);
     }),
     new Command("rect", 0, "r", CommandType.function, null, "Select rect tool", (_) => {
-        currentTool = Tool.rect;
+        SetTool(Tool.rect);
     }),
     new Command("filledrect", alt, "r", CommandType.function, null, "Select filled rect tool", (_) => {
-        currentTool = Tool.filledRect;
+        SetTool(Tool.filledRect);
     }),
     new Command("pxsize", 0, "", CommandType.int, 16, "Set the screen size of one pixel", (val) => {
         settings.pixelSize = val;

@@ -4,6 +4,7 @@ let mainInput = document.getElementById("main-input") as HTMLInputElement;
 let infoRight = document.getElementById("info-right")!!;
 let infoLeft = document.getElementById("info-left-text")!!;
 let searchResults = document.getElementById("search-list")!!;
+let toolIcon = document.getElementById("tool-icon")!!;
 
 let colorSelect = document.getElementById("color-select")!!;
 let colorSelectView = document.getElementById("color-view") as HTMLCanvasElement;
@@ -27,6 +28,14 @@ let exportFilename = document.getElementById("export-name") as HTMLInputElement;
 enum Tool {
     free, line, paintpot, rect, filledRect
 }
+
+const toolIcons = [
+    "icons/tool_free.png",
+    "icons/tool_line.png",
+    "icons/tool_paintpot.png",
+    "icons/tool_rect.png",
+    "icons/tool_filledrect.png",
+]
 
 const infobarSize = 27; // px
 
@@ -86,6 +95,7 @@ else
 canvas.addEventListener("contextmenu", event => event.preventDefault());
 
 InitUndo();
+SetTool(Tool.free);
 
 CreateImage(50, 50);
 addEventListener("resize", OnResize);
@@ -300,6 +310,12 @@ function ApplyMouseTools(preview: boolean)
         RecordUndo();
         Draw();
     }
+}
+
+function SetTool(tool: Tool)
+{
+    currentTool = tool;
+    toolIcon.style.setProperty("background-image", `url(${toolIcons[tool]})`);
 }
 
 function SetPixel(x: number, y: number, color: Color, temp = false)

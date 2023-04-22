@@ -9,6 +9,12 @@
 
     font-family: munro;
     font-size: calc(7 * var(--pixel));
+
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -o-crisp-edges;
+    image-rendering: -webkit-optimize-contrast;
+    -ms-interpolation-mode: nearest-neighbor;
+    image-rendering: pixelated;
 }
 
 body {
@@ -38,6 +44,25 @@ body {
     right: var(--pixel);
     top: var(--pixel);
     height: 1em;
+}
+
+.info-icons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+
+    position: absolute;
+    right: calc(9 * 5 * var(--pixel));
+    top: 0;
+    height: 100%;
+}
+
+.info-icons > * {
+    width: calc(9 * var(--pixel));
+    height: calc(9 * var(--pixel));
+    background-size: contain;
+    background-repeat: no-repeat;
 }
 
 #main-input {

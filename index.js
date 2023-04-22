@@ -4,6 +4,7 @@ let mainInput = document.getElementById("main-input");
 let infoRight = document.getElementById("info-right");
 let infoLeft = document.getElementById("info-left-text");
 let searchResults = document.getElementById("search-list");
+let toolIcon = document.getElementById("tool-icon");
 let colorSelect = document.getElementById("color-select");
 let colorSelectView = document.getElementById("color-view");
 let colorSelectSlider = document.getElementById("color-slider");
@@ -29,6 +30,13 @@ var Tool;
     Tool[Tool["rect"] = 3] = "rect";
     Tool[Tool["filledRect"] = 4] = "filledRect";
 })(Tool || (Tool = {}));
+const toolIcons = [
+    "icons/tool_free.png",
+    "icons/tool_line.png",
+    "icons/tool_paintpot.png",
+    "icons/tool_rect.png",
+    "icons/tool_filledrect.png",
+];
 const infobarSize = 27; // px
 let settings = {
     pixelSize: 16,
@@ -72,6 +80,7 @@ else
     currentColor = Color.FromRGB(0, 0, 0);
 canvas.addEventListener("contextmenu", event => event.preventDefault());
 InitUndo();
+SetTool(Tool.free);
 CreateImage(50, 50);
 addEventListener("resize", OnResize);
 addEventListener("mousemove", OnMouseMove);
@@ -234,6 +243,10 @@ function ApplyMouseTools(preview) {
         RecordUndo();
         Draw();
     }
+}
+function SetTool(tool) {
+    currentTool = tool;
+    toolIcon.style.setProperty("background-image", `url(${toolIcons[tool]})`);
 }
 function SetPixel(x, y, color, temp = false) {
     if (!IsInImage(x, y))

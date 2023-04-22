@@ -154,7 +154,7 @@ function GetCommandByHotkey(modifier: number, key: string) : Command | null
 {
     for (let command of Command.commands)
     {
-        if (command.modifier == modifier && command.key == key) return command;
+        if (command.modifier == modifier && command.key.toLowerCase() == key.toLowerCase()) return command;
     }
 
     return null;

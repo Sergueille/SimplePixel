@@ -110,7 +110,7 @@ function GetCommandByName(searchName) {
 }
 function GetCommandByHotkey(modifier, key) {
     for (let command of Command.commands) {
-        if (command.modifier == modifier && command.key == key)
+        if (command.modifier == modifier && command.key.toLowerCase() == key.toLowerCase())
             return command;
     }
     return null;

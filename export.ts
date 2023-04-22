@@ -2,6 +2,7 @@
 function OpenExportPanel()
 {
     exportPanel.classList.remove("hidden");
+    UpdateExportInputs();
 }
 
 function CloseExportPanel()
@@ -9,8 +10,15 @@ function CloseExportPanel()
     exportPanel.classList.add("hidden");
 }
 
+function UpdateExportInputs()
+{
+    SetCheckboxEnabled(exportTile, useGrid, false);
+    SetCheckboxEnabled(exportCropAlpha, !exportTile.checked, false);
+}
+
 function ExportImage()
 {
+    // Alpha cropping
     let sizeX = imageSizeX;
     let sizeY = imageSizeY;
     let startX = 0;
@@ -46,6 +54,31 @@ function ExportImage()
         }
     }
 
+    // Grid tiles
+    if (exportTile.checked)
+    {
+        let i = 0;
+        for (let x = 0; x <= imageSizeX - gridSizeX; x += gridSizeX)
+        {
+            for (let y = 0; y <= imageSizeY - gridSizeY; y += gridSizeY)
+            {
+                if (!IsRectEmpty(x, gridSizeX, y, gridSizeY))
+                    ExportRect(x, gridSizeX, y, gridSizeY, i);
+
+                i++;
+            }
+        }
+    }
+    else
+    {
+        ExportRect(startX, sizeX, startY, sizeY);
+    }
+
+    CloseExportPanel();
+}
+
+function ExportRect(startX, sizeX, startY, sizeY, number = -1)
+{
     let canvas = document.createElement("canvas");
     canvas.width = sizeX;
     canvas.height = sizeY;
@@ -69,12 +102,53 @@ function ExportImage()
     let url = canvas.toDataURL(mime);
 
     var a = document.createElement('a');
-    a.download = "export"
+
+    if (number < 0)
+        a.download = exportFilename.value;
+    else 
+        a.download = exportFilename.value + "_" + number.toString();
+
     a.href = url;
     a.click();
 
     a.remove();
     canvas.remove();
+}
 
-    CloseExportPanel();
+function IsRectEmpty(startX, sizeX, startY, sizeY)
+{
+    for (let x = startX; x < startX + sizeX; x++)
+    {
+        for (let y = startY; y < startY + sizeY; y++)
+        {
+            if (imageData[x + y * imageSizeX].a > 0.005) 
+                return false;
+        }
+    }
+
+    return true;
+}
+
+function SetInputEnabled(input: HTMLInputElement, enabled: boolean, defaultValue: any)
+{
+    input.readOnly = !enabled;
+    input.classList.toggle("disabled", !enabled);
+    input.parentElement?.classList.toggle("disabled", !enabled);
+
+    if (!enabled)
+    {
+        input.value = defaultValue;
+    }
+}
+
+function SetCheckboxEnabled(input: HTMLInputElement, enabled: boolean, defaultValue: boolean)
+{
+    input.disabled = !enabled;
+    input.classList.toggle("disabled", !enabled);
+    input.parentElement?.classList.toggle("disabled", !enabled);
+
+    if (!enabled)
+    {
+        input.checked = defaultValue;
+    }
 }

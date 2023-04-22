@@ -71,7 +71,10 @@
             <div>Export image:</div>
             <br>
             <div class="flex-row margin">
-                <span class="flex-flexible">File format:</span>
+                <span class="flex-flexible">
+                    File name:
+                </span>
+                <input id="export-name" type="text">
                 <select id="export-format">
                     <option value="0">.PNG</option>
                     <option value="1">.JPEG</option>
@@ -84,6 +87,12 @@
                     Crop transparent:
                 </span>
                 <input id="export-crop" type="checkbox">
+            </div>
+            <div class="flex-row margin">
+                <span class="flex-flexible">
+                    One image per grid tile:
+                </span>
+                <input id="export-tile" type="checkbox">
             </div>
             
             <button class="prim" id="export-btn">Export</button>

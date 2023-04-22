@@ -21,6 +21,8 @@ let exportPanel = document.getElementById("export-panel")!!;
 let exportButton = document.getElementById("export-btn")!!;
 let exportFormatSelect = document.getElementById("export-format") as HTMLSelectElement;
 let exportCropAlpha = document.getElementById("export-crop") as HTMLInputElement;
+let exportTile = document.getElementById("export-tile") as HTMLInputElement;
+let exportFilename = document.getElementById("export-name") as HTMLInputElement;
 
 enum Tool {
     free, line, paintpot
@@ -132,6 +134,9 @@ colorSelectHexInput.addEventListener("input", (ev) => {
 // Export.ts
 exportButton.addEventListener("click", () => {
     ExportImage();
+});
+exportPanel.addEventListener("mousemove", () => {
+    UpdateExportInputs();
 })
 
 OnResize();

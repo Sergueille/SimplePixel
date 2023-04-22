@@ -160,6 +160,15 @@ input[type="checkbox"]:hover::before, input[type="checkbox"]:focus-visible::befo
     color: var(--txt-d)
 }
 
+.disabled, .disabled > * {
+    color: var(--txt-disabled) !important;
+    cursor: not-allowed;
+}
+
+.disabled > input[type="checkbox"] {
+    border-color: var(--txt-disabled) !important;
+}
+
 /* ICONS */
 
 .maticon {
@@ -193,6 +202,7 @@ body[theme=dark] {
 
     --txt: #eee;
     --txt-d: #aaa;
+    --txt-disabled: #888;
 
     --hover: #444;
     --key: #fff2;
@@ -210,6 +220,7 @@ body[theme=light] {
 
     --txt: #222;
     --txt-d: #666;
+    --txt-disabled: #888;
 
     --hover: #00000008;
     --key: #0002;

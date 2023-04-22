@@ -19,6 +19,8 @@ let exportPanel = document.getElementById("export-panel");
 let exportButton = document.getElementById("export-btn");
 let exportFormatSelect = document.getElementById("export-format");
 let exportCropAlpha = document.getElementById("export-crop");
+let exportTile = document.getElementById("export-tile");
+let exportFilename = document.getElementById("export-name");
 var Tool;
 (function (Tool) {
     Tool[Tool["free"] = 0] = "free";
@@ -111,6 +113,9 @@ colorSelectHexInput.addEventListener("input", (ev) => {
 // Export.ts
 exportButton.addEventListener("click", () => {
     ExportImage();
+});
+exportPanel.addEventListener("mousemove", () => {
+    UpdateExportInputs();
 });
 OnResize();
 function CreateImage(sizeX, sizeY, keepOldData = false) {

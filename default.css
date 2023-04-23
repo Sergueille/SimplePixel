@@ -207,6 +207,8 @@ body[theme=dark] {
     --hover: #444;
     --key: #fff2;
     --red: #c22;
+
+    --invert: invert(0);
 }
 
 body[theme=light] {
@@ -225,6 +227,12 @@ body[theme=light] {
     --hover: #00000008;
     --key: #0002;
     --red: #fd2121;
+
+    --invert: invert(1);
+}
+
+.invert-light {
+    filter: var(--invert);
 }
 
 @font-face {

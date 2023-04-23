@@ -183,6 +183,18 @@ class Color
         return Math.abs(this.r - other.r) + Math.abs(this.b - other.b) + Math.abs(this.g - other.g) + Math.abs(this.a - other.a) < tolerance
     }
 
+    public GetColorUI()
+    {
+        let res = document.createElement("div");
+        res.classList.add("color", "alpha-bg");
+
+        let color = document.createElement("div");
+        color.style.backgroundColor = this.GetHex();
+
+        res.appendChild(color);
+        return res;
+    }
+
     private GetHSVConvertValues()
     {
         let cmax = Math.max(this.r, this.g, this.b);

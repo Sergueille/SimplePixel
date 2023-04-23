@@ -1,6 +1,12 @@
 function OpenExportPanel() {
     exportPanel.classList.remove("hidden");
     UpdateExportInputs();
+    setTimeout(() => {
+        if (!exportPanel.classList.contains("hidden")) {
+            exportFilename.focus();
+            exportFilename.select();
+        }
+    }, 200);
 }
 function CloseExportPanel() {
     exportPanel.classList.add("hidden");

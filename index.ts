@@ -4,6 +4,7 @@ let mainInput = document.getElementById("main-input") as HTMLInputElement;
 let infoRight = document.getElementById("info-right")!!;
 let infoLeft = document.getElementById("info-left-text")!!;
 let searchResults = document.getElementById("search-list")!!;
+let infoIconsParent = document.getElementById("info-icons")!!;
 let toolIcon = document.getElementById("tool-icon")!!;
 
 let colorSelect = document.getElementById("color-select")!!;
@@ -83,6 +84,9 @@ let useGrid = false;
 let gridSizeX = 16;
 let gridSizeY = 16;
 
+let mainColorUI : HTMLElement;
+let altColorUI : HTMLElement;
+
 // Initial theme
 let isDarkTheme = window.matchMedia("(prefers-color-scheme: dark)").matches;
 document.body.setAttribute("theme", isDarkTheme ? "dark" : "light");
@@ -94,6 +98,7 @@ else
 
 canvas.addEventListener("contextmenu", event => event.preventDefault());
 
+OnColorChanged();
 InitUndo();
 SetTool(Tool.free);
 
@@ -316,6 +321,17 @@ function SetTool(tool: Tool)
 {
     currentTool = tool;
     toolIcon.style.setProperty("background-image", `url(${toolIcons[tool]})`);
+}
+
+function OnColorChanged()
+{
+    mainColorUI?.remove();
+    altColorUI?.remove();
+    mainColorUI = currentColor.GetColorUI();
+    altColorUI = currentAltColor.GetColorUI();
+
+    infoIconsParent.appendChild(altColorUI);
+    infoIconsParent.appendChild(mainColorUI);
 }
 
 function SetPixel(x: number, y: number, color: Color, temp = false)

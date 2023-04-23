@@ -46,7 +46,7 @@ body {
     height: 1em;
 }
 
-.info-icons {
+#info-icons {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -58,11 +58,12 @@ body {
     height: 100%;
 }
 
-.info-icons > * {
-    width: calc(9 * var(--pixel));
-    height: calc(9 * var(--pixel));
+#info-icons > * {
+    width: calc(9 * 2px);
+    height: calc(9 * 2px);
     background-size: contain;
     background-repeat: no-repeat;
+    margin-right: var(--pixel);
 }
 
 #main-input {
@@ -252,4 +253,9 @@ body {
 
 #export-btn {
     margin-top: calc(2 * var(--pixel));
+}
+
+.color > div {
+    width: 100%;
+    height: 100%;
 }

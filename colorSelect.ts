@@ -14,9 +14,14 @@ function OpenColorSelector(colorCallback: Function, auto: Color | null = null)
     else color = auto!!;
 
     SetColor(color);
-
-    colorSelectHexInput.focus();
-    colorSelectHexInput.select();  
+    
+    setTimeout(() => {
+        if (!colorSelect.classList.contains("hidden"))
+        {
+            colorSelectHexInput.focus();
+            colorSelectHexInput.select();
+        }
+    }, 200);
 }
 
 function CloseColorSelector()

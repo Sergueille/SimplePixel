@@ -28,10 +28,16 @@ class Command
             CreateImage(vec.x, vec.y, true);
         }),
         new Command("color", 0, "c", CommandType.function, null, "Set the current color", (_) => {
-            OpenColorSelector((newColor) => {currentColor = newColor}, currentColor);
+            OpenColorSelector((newColor) => {
+                currentColor = newColor
+                OnColorChanged();
+            }, currentColor);
         }),
         new Command("altcolor", alt, "c", CommandType.function, null, "Set the alternative color (right click color)", (_) => {
-            OpenColorSelector((newColor) => {currentAltColor = newColor}, currentAltColor);
+            OpenColorSelector((newColor) => {
+                currentAltColor = newColor
+                OnColorChanged();
+            }, currentAltColor);
         }),
         new Command("free", 0, "f", CommandType.function, null, "Select free draw tool", (_) => {
             SetTool(Tool.free);
@@ -54,24 +60,31 @@ class Command
         }),
         new Command("seth", alt, "h", CommandType.float, 1, "Set the hue of the current color (0 - 1)", (val) => {
             currentColor.SetH(val);
+            OnColorChanged();
         }),
         new Command("sets", alt, "s", CommandType.float, 1, "Set the saturation of the current color (0 - 1)", (val) => {
             currentColor.SetS(val);
+            OnColorChanged();
         }),
         new Command("setv", alt, "v", CommandType.float, 1, "Set the value of the current color (0 - 1)", (val) => {
             currentColor.SetV(val);
+            OnColorChanged();
         }),
         new Command("setr", alt, "r", CommandType.float, 1, "Set the red value of the current color (0 - 1)", (val) => {
             currentColor.r = val;
+            OnColorChanged();
         }),
         new Command("setg", alt, "g", CommandType.float, 1, "Set the green value of the current color (0 - 1)", (val) => {
             currentColor.g = val;
+            OnColorChanged();
         }),
         new Command("setb", alt, "b", CommandType.float, 1, "Set the blue value of the current color (0 - 1)", (val) => {
             currentColor.b = val;
+            OnColorChanged();
         }),
         new Command("seta", alt, "a", CommandType.float, 1, "Set the alpha value of the current color (0 - 1)", (val) => {
             currentColor.a = val;
+            OnColorChanged();
         }),
         new Command("undo", control, "z", CommandType.function, null, "Undo last action", (_) => {
             Undo();

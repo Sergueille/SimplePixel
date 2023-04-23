@@ -110,6 +110,7 @@ addEventListener("mouseup", OnMouseUp);
 canvas.addEventListener("mousedown", () => OnMouseDownCanvas())
 canvas.addEventListener("mousemove", () => OnMouseMoveCanvas())
 canvas.addEventListener("mouseup", () => OnMouseUpCanvas())
+canvas.addEventListener("wheel", (ev) => OnWheel(ev as WheelEvent))
 
 // search.ts
 addEventListener("keydown", OnKeyPressed);
@@ -272,6 +273,24 @@ function OnMouseDownCanvas()
 function OnMouseUpCanvas() 
 {
     ApplyMouseTools(false);
+}
+
+function OnWheel(event: WheelEvent)
+{
+    const zoomSpeed = .2;
+
+    if (event.deltaY < 0)
+    {
+        settings.pixelSize = Math.ceil(settings.pixelSize * (1 + zoomSpeed));
+    }
+    else
+    {
+        if (settings.pixelSize > 2)
+            settings.pixelSize = Math.floor(settings.pixelSize * (1 - zoomSpeed));
+    }
+
+    
+    OnResize();
 }
 
 function ApplyMouseTools(preview: boolean)

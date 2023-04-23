@@ -156,7 +156,7 @@ exportPanel.addEventListener("mousemove", () => {
 
 OnResize();
 
-function CreateImage(sizeX: number, sizeY: number, keepOldData = false)
+function CreateImage(sizeX: number, sizeY: number, keepOldData = false, recordUndo = true)
 {
     let oldData;
     if (keepOldData)
@@ -195,7 +195,9 @@ function CreateImage(sizeX: number, sizeY: number, keepOldData = false)
     }
 
     OnResize();
-    RecordUndo();
+
+    if (recordUndo)
+        RecordUndo();
 }
 
 function OnResize()
@@ -526,7 +528,7 @@ function DrawPixel(x: number, y: number, color: Color)
 
     let [screenX, screenY] = PixelToScreen(x, y);
     ctx.fillStyle = drawColor.GetHex();
-    ctx.fillRect(screenX - 0.5, screenY - 0.5, settings.pixelSize + 1, settings.pixelSize + 1);
+    ctx.fillRect(screenX, screenY, settings.pixelSize, settings.pixelSize);
 }
 
 function SwitchTheme()
@@ -543,4 +545,54 @@ function SwitchTheme()
     }
 
     Draw();
+}
+
+function LoadFile()
+{
+    // Ask for file
+    var input = document.createElement("input");
+    input.type = "file";
+
+    input.onchange = () => {
+        if (input.files == null) return;
+
+        let reader = new FileReader();
+        reader.onload = () => {
+            let image = new Image();
+            image.src = reader.result as string;
+
+            let loadCanvas = document.createElement("canvas");
+            let loadCtx = loadCanvas.getContext("2d") as CanvasRenderingContext2D;
+
+            setTimeout(() => {
+                loadCanvas.width = image.naturalWidth;
+                loadCanvas.height = image.naturalHeight;
+                loadCtx.drawImage(image, 0, 0);
+
+                let fileData = loadCtx.getImageData(0, 0, loadCanvas.width, loadCanvas.height).data;
+                console.log(fileData);
+                CreateImage(loadCanvas.width, loadCanvas.height, false, false);
+
+                for (let x = 0; x < loadCanvas.width; x++)
+                {
+                    for (let y = 0; y < loadCanvas.height; y++)
+                    {
+                        imageData[x + y * imageSizeX] = Color.FromRGB(
+                            fileData[x * 4 + y * 4 * imageSizeX] / 255,
+                            fileData[x * 4 + y * 4 * imageSizeX + 1] / 255,
+                            fileData[x * 4 + y * 4 * imageSizeX + 2] / 255,
+                            fileData[x * 4 + y * 4 * imageSizeX + 3] / 255,
+                        );
+                    }
+                }
+
+                Draw();
+                RecordUndo();
+            }, 1)
+        };
+        
+        reader.readAsDataURL(input.files[0]);
+    };
+
+    input.click();
 }

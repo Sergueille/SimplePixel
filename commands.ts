@@ -114,6 +114,9 @@ class Command
             useGrid = false;
             Draw();
         }),
+        new Command("open", control, "o", CommandType.function, null, "Load a file", (_) => {
+            LoadFile();
+        }),
     ]
 
     public name: string;

@@ -106,7 +106,7 @@ Command.commands = [
     new Command("clear", shift | alt, "n", CommandType.function, null, "Clear image", (_) => {
         CreateImage(imageSizeX, imageSizeY);
     }),
-    new Command("imgsize", 0, "", CommandType.vec2, new vec2(50, 50), "Set size of image", (vec) => {
+    new Command("imgsize", shift, "n", CommandType.vec2, new vec2(50, 50), "Set size of image", (vec) => {
         CreateImage(vec.x, vec.y, true);
     }),
     new Command("color", 0, "c", CommandType.function, null, "Set the current color", (_) => {
@@ -180,7 +180,7 @@ Command.commands = [
     new Command("theme", alt, "t", CommandType.function, null, "Switch between light and dark themes", (_) => {
         SwitchTheme();
     }),
-    new Command("export", control, "e", CommandType.function, null, "Export image as a file", (_) => {
+    new Command("export", control, "s", CommandType.function, null, "Export image as a file", (_) => {
         OpenExportPanel();
     }),
     new Command("colorpicker", 0, "x", CommandType.function, null, "Select a color from the image and set the current color", (_) => {

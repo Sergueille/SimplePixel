@@ -74,6 +74,9 @@ let gridSizeX = 16;
 let gridSizeY = 16;
 let mainColorUI;
 let altColorUI;
+let toolSize = 1;
+let toolSizeChangeTime = -1;
+const toolSizeDisplayDuration = 500; // ms
 // Initial theme
 let isDarkTheme = window.matchMedia("(prefers-color-scheme: dark)").matches;
 document.body.setAttribute("theme", isDarkTheme ? "dark" : "light");
@@ -178,9 +181,6 @@ function OnMouseMove(event) {
     [lastMouseX, lastMouseY] = [mouseX, mouseY];
     [mouseX, mouseY] = ScreenToPixel(event.pageX, event.pageY);
     infoRight.innerHTML = `${mouseX}, ${mouseY}`;
-    if (usePicker) {
-        Draw();
-    }
 }
 function OnMouseDown(event) {
     if (event.button == 0)
@@ -200,6 +200,8 @@ function OnMouseUp(event) {
         mouseRight = false;
 }
 function OnMouseMoveCanvas() {
+    if (lastMouseX != mouseX || lastMouseY != mouseY)
+        Draw();
     ApplyMouseTools(true);
 }
 function OnMouseDownCanvas() {
@@ -218,15 +220,35 @@ function OnMouseUpCanvas() {
     ApplyMouseTools(false);
 }
 function OnWheel(event) {
-    const zoomSpeed = .2;
-    if (event.deltaY < 0) {
-        settings.pixelSize = Math.ceil(settings.pixelSize * (1 + zoomSpeed));
+    if (event.ctrlKey) // Handle zoom
+     {
+        const zoomSpeed = .2;
+        if (event.deltaY < 0) {
+            settings.pixelSize = Math.ceil(settings.pixelSize * (1 + zoomSpeed));
+        }
+        else {
+            if (settings.pixelSize > 2)
+                settings.pixelSize = Math.floor(settings.pixelSize * (1 - zoomSpeed));
+        }
+        OnResize();
+        event.preventDefault(); // Prevent page zoom
     }
-    else {
-        if (settings.pixelSize > 2)
-            settings.pixelSize = Math.floor(settings.pixelSize * (1 - zoomSpeed));
+    else // Change tool size
+     {
+        if (event.deltaY > 0) {
+            if (toolSize > 1)
+                toolSize--;
+        }
+        else {
+            toolSize++;
+        }
+        toolSizeChangeTime = Date.now();
+        Draw();
+        setTimeout(() => {
+            if (Date.now() - toolSizeChangeTime > toolSizeDisplayDuration)
+                Draw();
+        }, toolSizeDisplayDuration + 10); // Draw again to make sure it's erased
     }
-    OnResize();
 }
 function ApplyMouseTools(preview) {
     if (!mouseLeft && !mouseRight)
@@ -250,10 +272,12 @@ function ApplyMouseTools(preview) {
         SetLine(mouseStartPosX, mouseY, mouseStartPosX, mouseStartPosY, color, preview);
     }
     else if (currentTool == Tool.filledRect) {
-        let startX = Math.min(mouseStartPosX, mouseX);
-        let startY = Math.min(mouseStartPosY, mouseY);
-        let sizeX = Math.max(mouseStartPosX, mouseX) - startX;
-        let sizeY = Math.max(mouseStartPosY, mouseY) - startY;
+        let [minX, minY, maxX, maxY] = GetToolRectWithSize(mouseX, mouseY);
+        let [minStartX, minStartY, maxStartX, maxStartY] = GetToolRectWithSize(mouseStartPosX, mouseStartPosY);
+        let startX = Math.min(minStartX, minX);
+        let startY = Math.min(minStartY, minY);
+        let sizeX = Math.max(maxStartX, maxX) - startX;
+        let sizeY = Math.max(maxStartY, maxY) - startY;
         SetRect(startX, startY, sizeX, sizeY, color, preview);
     }
     if (!preview) {
@@ -273,6 +297,10 @@ function OnColorChanged() {
     infoIconsParent.appendChild(altColorUI);
     infoIconsParent.appendChild(mainColorUI);
 }
+function SetToolSizeRect(x, y, color, temp = false) {
+    let [minX, minY, maxX, maxY] = GetToolRectWithSize(x, y);
+    SetRect(minX, minY, maxX - minX, maxY - minY, color, temp);
+}
 function SetPixel(x, y, color, temp = false) {
     if (!IsInImage(x, y))
         return;
@@ -285,7 +313,7 @@ function SetPixel(x, y, color, temp = false) {
 }
 function SetLine(startX, startY, endX, endY, color, temp = false) {
     if (startX == endX && startY == endY) {
-        SetPixel(startX, startY, color, temp);
+        SetToolSizeRect(startX, startY, color, temp);
         return;
     }
     let ax = (endY - startY) / (endX - startX);
@@ -297,7 +325,7 @@ function SetLine(startX, startY, endX, endY, color, temp = false) {
         }
         for (let y = startY; y <= endY; y++) {
             let x = startX + ay * (y - startY);
-            SetPixel(Math.round(x), y, color, temp);
+            SetToolSizeRect(Math.round(x), y, color, temp);
         }
     }
     else {
@@ -307,7 +335,7 @@ function SetLine(startX, startY, endX, endY, color, temp = false) {
         }
         for (let x = startX; x <= endX; x++) {
             let y = startY + ax * (x - startX);
-            SetPixel(x, Math.round(y), color, temp);
+            SetToolSizeRect(x, Math.round(y), color, temp);
         }
     }
 }
@@ -333,8 +361,8 @@ function PaintPot(startX, startY, color, temp = false) {
     }
 }
 function SetRect(x, y, sizeX, sizeY, color, preview = false) {
-    for (let xx = x; xx < x + sizeX; xx++) {
-        for (let yy = y; yy < y + sizeY; yy++) {
+    for (let xx = x; xx <= x + sizeX; xx++) {
+        for (let yy = y; yy <= y + sizeY; yy++) {
             SetPixel(xx, yy, color, preview);
         }
     }
@@ -359,6 +387,7 @@ function ScreenToPixel(x, y) {
     ];
 }
 function Draw() {
+    console.log("Drawing");
     cornerPosX = window.innerWidth / 2 - imageSizeX * settings.pixelSize / 2;
     cornerPosY = (window.innerHeight - infobarSize) / 2 - imageSizeY * settings.pixelSize / 2;
     let startX = Math.floor(-(canvasPixelSizeX - imageSizeX) / 2 - 1);
@@ -396,6 +425,29 @@ function Draw() {
             ctx.lineTo(cornerPosX + imageSizeX * settings.pixelSize - 1, cornerPosY + y * settings.pixelSize - 1);
             ctx.stroke();
         }
+    }
+    // Draw tool size preview
+    let showSize = false;
+    if (Date.now() - toolSizeChangeTime < toolSizeDisplayDuration) {
+        ctx.strokeStyle = "#FF03F5";
+        showSize = true;
+    }
+    else if (toolSize > 1) {
+        ctx.strokeStyle = "#8885";
+        showSize = true;
+    }
+    if (showSize) {
+        let [minXPixel, minYPixel, maxXPixel, maxYPixel] = GetToolRectWithSize(mouseX, mouseY);
+        let [minX, minY] = PixelToScreen(minXPixel, minYPixel);
+        let [maxX, maxY] = PixelToScreen(maxXPixel + 1, maxYPixel + 1);
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(minX, minY);
+        ctx.lineTo(minX, maxY);
+        ctx.lineTo(maxX, maxY);
+        ctx.lineTo(maxX, minY);
+        ctx.lineTo(minX, minY);
+        ctx.stroke();
     }
 }
 function DrawPixel(x, y, color) {
@@ -452,5 +504,10 @@ function LoadFile() {
         reader.readAsDataURL(input.files[0]);
     };
     input.click();
+}
+function GetToolRectWithSize(x, y) {
+    let minX = x - Math.floor(toolSize / 2);
+    let minY = y - Math.floor(toolSize / 2);
+    return [minX, minY, minX + toolSize - 1, minY + toolSize - 1];
 }
 //# sourceMappingURL=index.js.map

@@ -39,6 +39,8 @@ const toolIcons = [
     "icons/tool_filledrect.png",
 ];
 const infobarSize = 27; // px
+const lineColor = "#FF03F5";
+const grayLineColor = "#8885";
 let settings = {
     pixelSize: 16,
     bgColorA: Color.FromHSV(0, 0, .10),
@@ -77,6 +79,15 @@ let altColorUI;
 let toolSize = 1;
 let toolSizeChangeTime = -1;
 const toolSizeDisplayDuration = 500; // ms
+var MeasureState;
+(function (MeasureState) {
+    MeasureState[MeasureState["disabled"] = 0] = "disabled";
+    MeasureState[MeasureState["firstPoint"] = 1] = "firstPoint";
+    MeasureState[MeasureState["secondPoint"] = 2] = "secondPoint";
+})(MeasureState || (MeasureState = {}));
+let measureState = MeasureState.disabled;
+let measureStateStartX = 0;
+let measureStateStartY = 0;
 // Initial theme
 let isDarkTheme = window.matchMedia("(prefers-color-scheme: dark)").matches;
 document.body.setAttribute("theme", isDarkTheme ? "dark" : "light");
@@ -85,6 +96,7 @@ if (isDarkTheme)
 else
     currentColor = Color.FromRGB(0, 0, 0);
 canvas.addEventListener("contextmenu", event => event.preventDefault());
+// Setup
 OnColorChanged();
 InitUndo();
 SetTool(Tool.free);
@@ -212,12 +224,21 @@ function OnMouseDownCanvas() {
         usePicker = false;
         Draw();
     }
-    else {
+    else if (measureState == MeasureState.disabled) {
         setTimeout(() => ApplyMouseTools(true), 0);
     }
 }
 function OnMouseUpCanvas() {
-    ApplyMouseTools(false);
+    if (measureState == MeasureState.firstPoint) {
+        measureState = MeasureState.secondPoint;
+        measureStateStartX = mouseX;
+        measureStateStartY = mouseY;
+    }
+    else if (measureState == MeasureState.secondPoint) {
+        measureState = MeasureState.disabled;
+    }
+    else
+        ApplyMouseTools(false);
 }
 function OnWheel(event) {
     if (event.ctrlKey) // Handle zoom
@@ -387,7 +408,6 @@ function ScreenToPixel(x, y) {
     ];
 }
 function Draw() {
-    console.log("Drawing");
     cornerPosX = window.innerWidth / 2 - imageSizeX * settings.pixelSize / 2;
     cornerPosY = (window.innerHeight - infobarSize) / 2 - imageSizeY * settings.pixelSize / 2;
     let startX = Math.floor(-(canvasPixelSizeX - imageSizeX) / 2 - 1);
@@ -402,16 +422,46 @@ function Draw() {
             }
         }
     }
-    if (usePicker && IsInImage(mouseX, mouseY)) {
-        let [screenX, screenY] = PixelToScreen(mouseX, mouseY);
-        ctx.strokeStyle = "#FF03F5";
+    if (IsInImage(mouseX, mouseY)) // Draw square around current pixel
+     {
+        if (usePicker || measureState == MeasureState.firstPoint) {
+            let [screenX, screenY] = PixelToScreen(mouseX, mouseY);
+            ctx.strokeStyle = lineColor;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.rect(screenX, screenY, settings.pixelSize, settings.pixelSize);
+            ctx.stroke();
+        }
+    }
+    // Draw measures
+    if (measureState == MeasureState.secondPoint) {
+        let minX = Math.min(measureStateStartX, mouseX);
+        let minY = Math.min(measureStateStartY, mouseY);
+        let maxX = Math.max(measureStateStartX, mouseX) + 1;
+        let maxY = Math.max(measureStateStartY, mouseY) + 1;
+        let [screenStartX, screenStartY] = PixelToScreen(minX, minY);
+        let [screenEndX, screenEndY] = PixelToScreen(maxX, maxY);
+        ctx.strokeStyle = lineColor;
         ctx.lineWidth = 2;
         ctx.beginPath();
-        ctx.rect(screenX, screenY, settings.pixelSize, settings.pixelSize);
+        ctx.rect(screenStartX, screenStartY, screenEndX - screenStartX, screenEndY - screenStartY);
         ctx.stroke();
+        let middleX = (screenStartX + screenEndX) / 2;
+        let middleY = (screenStartY + screenEndY) / 2;
+        let sizeX = maxX - minX;
+        let sizeY = maxY - minY;
+        ctx.fillStyle = lineColor;
+        ctx.font = "20px munro";
+        ctx.textBaseline = "top";
+        ctx.textAlign = "center";
+        ctx.fillText(sizeX.toString(), middleX, screenEndY + settings.pixelSize / 2);
+        ctx.textBaseline = "middle";
+        ctx.textAlign = "left";
+        ctx.fillText(sizeY.toString(), screenEndX + settings.pixelSize / 2, middleY);
     }
-    if (useGrid) {
-        ctx.strokeStyle = "#8885";
+    if (useGrid) // Draw grid
+     {
+        ctx.strokeStyle = grayLineColor;
         ctx.lineWidth = 2;
         for (let x = gridSizeX; x < imageSizeX; x += gridSizeX) {
             ctx.beginPath();
@@ -429,11 +479,11 @@ function Draw() {
     // Draw tool size preview
     let showSize = false;
     if (Date.now() - toolSizeChangeTime < toolSizeDisplayDuration) {
-        ctx.strokeStyle = "#FF03F5";
+        ctx.strokeStyle = lineColor;
         showSize = true;
     }
     else if (toolSize > 1) {
-        ctx.strokeStyle = "#8885";
+        ctx.strokeStyle = grayLineColor;
         showSize = true;
     }
     if (showSize) {

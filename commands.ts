@@ -20,6 +20,8 @@ class Command
             mainInput.blur();
             CloseColorSelector();
             CloseExportPanel();
+            usePicker = false;
+            measureState = MeasureState.disabled;
         }),
         new Command("clear", shift | alt, "n", CommandType.function, null, "Clear image", (_) => {
             CreateImage(imageSizeX, imageSizeY);
@@ -116,6 +118,9 @@ class Command
         }),
         new Command("open", control, "o", CommandType.function, null, "Load a file", (_) => {
             LoadFile();
+        }),
+        new Command("mes", 0, "m", CommandType.function, null, "Measure a distance", (_) => {
+            measureState = MeasureState.firstPoint;
         }),
     ]
 

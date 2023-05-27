@@ -103,7 +103,7 @@ Command.commands = [
         CloseColorSelector();
         CloseExportPanel();
         usePicker = false;
-        measureState = MeasureState.disabled;
+        selectState = SelectState.disabled;
     }),
     new Command("clear", shift | alt, "n", CommandType.function, null, "Clear image", (_) => {
         CreateImage(imageSizeX, imageSizeY);
@@ -202,7 +202,13 @@ Command.commands = [
         LoadFile();
     }),
     new Command("mes", 0, "m", CommandType.function, null, "Measure a distance", (_) => {
-        measureState = MeasureState.firstPoint;
+        StartSelection(SelectAction.measure);
+    }),
+    new Command("copy", control, "c", CommandType.function, null, "Copy a region", (_) => {
+        StartSelection(SelectAction.copy);
+    }),
+    new Command("cut", control, "x", CommandType.function, null, "Copy a region, then fill it with alt color", (_) => {
+        StartSelection(SelectAction.cut);
     }),
 ];
 //# sourceMappingURL=commands.js.map

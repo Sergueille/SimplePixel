@@ -63,9 +63,9 @@ let canvasPixelSizeY: number;
 let cornerPosX: number; // On screen
 let cornerPosY: number;
 
-let mouseX: number;
+let mouseX: number; // In pixel
 let mouseY: number;
-let lastMouseX: number;
+let lastMouseX: number; // In pixel
 let lastMouseY: number;
 
 let mouseLeft = false;
@@ -93,12 +93,22 @@ let toolSize = 1;
 let toolSizeChangeTime = -1;
 const toolSizeDisplayDuration = 500; // ms
 
-enum MeasureState {
+enum SelectState {
     disabled, firstPoint, secondPoint
 }
-let measureState = MeasureState.disabled;
-let measureStateStartX = 0;
-let measureStateStartY = 0;
+
+enum SelectAction {
+    none, measure, copy, cut
+}
+
+let selectState = SelectState.disabled;
+let selectAction = SelectAction.none;
+let selectStartX = 0;
+let selectStartY = 0;
+
+let copyData: Color[];
+let copySizeX: number;
+let copySizeY: number;
 
 
 // Initial theme
@@ -277,7 +287,7 @@ function OnMouseDownCanvas()
         usePicker = false;
         Draw();
     }
-    else if (measureState == MeasureState.disabled)
+    else if (selectState == SelectState.disabled)
     {
         setTimeout(() => ApplyMouseTools(true), 0);
     }
@@ -285,15 +295,30 @@ function OnMouseDownCanvas()
 
 function OnMouseUpCanvas() 
 {
-    if (measureState == MeasureState.firstPoint)
+    if (selectState == SelectState.firstPoint)
     {
-        measureState = MeasureState.secondPoint;
-        measureStateStartX = mouseX;
-        measureStateStartY = mouseY;
+        selectState = SelectState.secondPoint;
+        selectStartX = mouseX;
+        selectStartY = mouseY;
     }
-    else if (measureState == MeasureState.secondPoint)
+    else if (selectState == SelectState.secondPoint)
     {
-        measureState = MeasureState.disabled;
+        selectState = SelectState.disabled;
+
+        if (selectAction == SelectAction.copy || selectAction == SelectAction.cut)
+        {
+            [copySizeX, copySizeY] = GetRectSize(mouseX, mouseY, selectStartX, selectStartY);
+            copyData = [];
+
+            IterateThroughRect((x, y, coordX, coordY) => { // Copy
+                copyData.push(imageData[coordX + coordY * imageSizeX].Copy());
+
+                if (selectAction == SelectAction.cut)
+                    imageData[coordX + coordY * imageSizeX] = currentAltColor.Copy();
+
+            }, mouseX, mouseY, selectStartX, selectStartY);
+
+        }
     }
     else
         ApplyMouseTools(false);
@@ -560,7 +585,7 @@ function Draw()
 
     if (IsInImage(mouseX, mouseY)) // Draw square around current pixel
     {
-        if (usePicker|| measureState == MeasureState.firstPoint)
+        if (usePicker || selectState == SelectState.firstPoint)
         {
             let [screenX, screenY] = PixelToScreen(mouseX, mouseY);
 
@@ -573,12 +598,12 @@ function Draw()
     }
     
     // Draw measures
-    if (measureState == MeasureState.secondPoint)
+    if (selectState == SelectState.secondPoint)
     {
-        let minX = Math.min(measureStateStartX, mouseX);
-        let minY = Math.min(measureStateStartY, mouseY);
-        let maxX = Math.max(measureStateStartX, mouseX) + 1;
-        let maxY = Math.max(measureStateStartY, mouseY) + 1;
+        let minX = Math.min(selectStartX, mouseX);
+        let minY = Math.min(selectStartY, mouseY);
+        let maxX = Math.max(selectStartX, mouseX) + 1;
+        let maxY = Math.max(selectStartY, mouseY) + 1;
 
         let [screenStartX, screenStartY] = PixelToScreen(minX, minY);
         let [screenEndX, screenEndY] = PixelToScreen(maxX, maxY);
@@ -594,14 +619,19 @@ function Draw()
         let sizeX = maxX - minX;
         let sizeY = maxY - minY;
 
-        ctx.fillStyle = lineColor;
-        ctx.font = "20px munro";
-        ctx.textBaseline = "top";
-        ctx.textAlign = "center"
-        ctx.fillText(sizeX.toString(), middleX, screenEndY + settings.pixelSize / 2);
-        ctx.textBaseline = "middle";
-        ctx.textAlign = "left"
-        ctx.fillText(sizeY.toString(), screenEndX + settings.pixelSize / 2, middleY);
+        // Draw numbers if measuring
+
+        if (selectAction == SelectAction.measure)
+        {
+            ctx.fillStyle = lineColor;
+            ctx.font = "20px munro";
+            ctx.textBaseline = "top";
+            ctx.textAlign = "center"
+            ctx.fillText(sizeX.toString(), middleX, screenEndY + settings.pixelSize / 2);
+            ctx.textBaseline = "middle";
+            ctx.textAlign = "left"
+            ctx.fillText(sizeY.toString(), screenEndX + settings.pixelSize / 2, middleY);
+        }
     }
 
     if (useGrid) // Draw grid
@@ -743,4 +773,10 @@ function GetToolRectWithSize(x: number, y: number) : [number, number, number, nu
     let minX = x - Math.floor(toolSize / 2);
     let minY = y - Math.floor(toolSize / 2);
     return [minX, minY, minX + toolSize - 1, minY + toolSize - 1];
+}
+
+function StartSelection(action: SelectAction)
+{
+    selectState = SelectState.firstPoint;
+    selectAction = action;
 }

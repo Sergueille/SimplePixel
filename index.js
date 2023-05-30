@@ -31,12 +31,44 @@ var Tool;
     Tool[Tool["rect"] = 3] = "rect";
     Tool[Tool["filledRect"] = 4] = "filledRect";
 })(Tool || (Tool = {}));
+var SelectState;
+(function (SelectState) {
+    SelectState[SelectState["disabled"] = 0] = "disabled";
+    SelectState[SelectState["firstPoint"] = 1] = "firstPoint";
+    SelectState[SelectState["secondPoint"] = 2] = "secondPoint";
+})(SelectState || (SelectState = {}));
+var SelectAction;
+(function (SelectAction) {
+    SelectAction[SelectAction["none"] = 0] = "none";
+    SelectAction[SelectAction["measure"] = 1] = "measure";
+    SelectAction[SelectAction["copy"] = 2] = "copy";
+    SelectAction[SelectAction["cut"] = 3] = "cut";
+})(SelectAction || (SelectAction = {}));
+var ClickAction;
+(function (ClickAction) {
+    ClickAction[ClickAction["none"] = 0] = "none";
+    ClickAction[ClickAction["picker"] = 1] = "picker";
+    ClickAction[ClickAction["paste"] = 2] = "paste";
+    ClickAction[ClickAction["pasteTransparent"] = 3] = "pasteTransparent";
+})(ClickAction || (ClickAction = {}));
 const toolIcons = [
     "icons/tool_free.png",
     "icons/tool_line.png",
     "icons/tool_paintpot.png",
     "icons/tool_rect.png",
     "icons/tool_filledrect.png",
+];
+const clickIcons = [
+    "",
+    "icons/click_picker.png",
+    "icons/select_copy.png",
+    "icons/click_pastetransparent.png",
+];
+const selectIcons = [
+    "",
+    "icons/select_measure.png",
+    "icons/select_copy.png",
+    "icons/select_copy.png",
 ];
 const infobarSize = 27; // px
 const lineColor = "#FF03F5";
@@ -69,7 +101,7 @@ let mouseStartPosY;
 let currentColor;
 let currentAltColor = Color.FromRGB(0, 0, 0, 0);
 let currentTool = Tool.free;
-let usePicker = false;
+let clickAction = ClickAction.none;
 let commandHistory = [];
 let useGrid = false;
 let gridSizeX = 16;
@@ -79,19 +111,6 @@ let altColorUI;
 let toolSize = 1;
 let toolSizeChangeTime = -1;
 const toolSizeDisplayDuration = 500; // ms
-var SelectState;
-(function (SelectState) {
-    SelectState[SelectState["disabled"] = 0] = "disabled";
-    SelectState[SelectState["firstPoint"] = 1] = "firstPoint";
-    SelectState[SelectState["secondPoint"] = 2] = "secondPoint";
-})(SelectState || (SelectState = {}));
-var SelectAction;
-(function (SelectAction) {
-    SelectAction[SelectAction["none"] = 0] = "none";
-    SelectAction[SelectAction["measure"] = 1] = "measure";
-    SelectAction[SelectAction["copy"] = 2] = "copy";
-    SelectAction[SelectAction["cut"] = 3] = "cut";
-})(SelectAction || (SelectAction = {}));
 let selectState = SelectState.disabled;
 let selectAction = SelectAction.none;
 let selectStartX = 0;
@@ -108,7 +127,7 @@ else
     currentColor = Color.FromRGB(0, 0, 0);
 canvas.addEventListener("contextmenu", event => event.preventDefault());
 // Setup
-OnColorChanged();
+UpdateToolbarIcons();
 InitUndo();
 SetTool(Tool.free);
 CreateImage(50, 50);
@@ -229,24 +248,24 @@ function OnMouseMoveCanvas() {
 }
 function OnMouseDownCanvas() {
     CloseColorSelector();
-    if (usePicker) {
+    if (clickAction == ClickAction.picker) {
         if (IsInImage(mouseX, mouseY))
             currentColor = imageData[mouseX + imageSizeX * mouseY];
-        usePicker = false;
+        UpdateToolbarIcons();
+        SetClickAction(ClickAction.none);
         Draw();
     }
-    else if (selectState == SelectState.disabled) {
-        setTimeout(() => ApplyMouseTools(true), 0);
-    }
+    setTimeout(() => ApplyMouseTools(true), 0); // HACK: why timeout?
 }
 function OnMouseUpCanvas() {
+    ApplyMouseTools(false);
     if (selectState == SelectState.firstPoint) {
         selectState = SelectState.secondPoint;
         selectStartX = mouseX;
         selectStartY = mouseY;
     }
     else if (selectState == SelectState.secondPoint) {
-        selectState = SelectState.disabled;
+        SetSelectAction(SelectAction.none);
         if (selectAction == SelectAction.copy || selectAction == SelectAction.cut) {
             [copySizeX, copySizeY] = GetRectSize(mouseX, mouseY, selectStartX, selectStartY);
             copyData = [];
@@ -257,8 +276,6 @@ function OnMouseUpCanvas() {
             }, mouseX, mouseY, selectStartX, selectStartY);
         }
     }
-    else
-        ApplyMouseTools(false);
 }
 function OnWheel(event) {
     if (event.ctrlKey) // Handle zoom
@@ -294,6 +311,8 @@ function OnWheel(event) {
 function ApplyMouseTools(preview) {
     if (!mouseLeft && !mouseRight)
         return;
+    if (clickAction != ClickAction.none || selectState != SelectState.disabled)
+        return;
     let color = mouseLeft ? currentColor : currentAltColor;
     if (preview)
         Draw();
@@ -328,15 +347,38 @@ function ApplyMouseTools(preview) {
 }
 function SetTool(tool) {
     currentTool = tool;
-    toolIcon.style.setProperty("background-image", `url(${toolIcons[tool]})`);
+    UpdateToolbarIcons();
 }
-function OnColorChanged() {
+function SetClickAction(newClickAction) {
+    clickAction = newClickAction;
+    UpdateToolbarIcons();
+}
+function SetSelectAction(newSelectAction) {
+    selectAction = newSelectAction;
+    if (selectAction == SelectAction.none)
+        selectState = SelectState.disabled;
+    else
+        selectState = SelectState.firstPoint;
+    UpdateToolbarIcons();
+}
+function UpdateToolbarIcons() {
     mainColorUI?.remove();
     altColorUI?.remove();
     mainColorUI = currentColor.GetColorUI();
     altColorUI = currentAltColor.GetColorUI();
-    infoIconsParent.appendChild(altColorUI);
     infoIconsParent.appendChild(mainColorUI);
+    infoIconsParent.appendChild(altColorUI);
+    let imageName = "";
+    if (selectState != SelectState.disabled) {
+        imageName = selectIcons[selectAction];
+    }
+    else if (clickAction != ClickAction.none) {
+        imageName = clickIcons[clickAction];
+    }
+    else {
+        imageName = toolIcons[currentTool];
+    }
+    toolIcon.style.setProperty("background-image", `url(${imageName})`);
 }
 function SetToolSizeRect(x, y, color, temp = false) {
     let [minX, minY, maxX, maxY] = GetToolRectWithSize(x, y);
@@ -444,7 +486,7 @@ function Draw() {
     }
     if (IsInImage(mouseX, mouseY)) // Draw square around current pixel
      {
-        if (usePicker || selectState == SelectState.firstPoint) {
+        if (clickAction == ClickAction.picker || selectState == SelectState.firstPoint) {
             let [screenX, screenY] = PixelToScreen(mouseX, mouseY);
             ctx.strokeStyle = lineColor;
             ctx.lineWidth = 2;
@@ -582,9 +624,5 @@ function GetToolRectWithSize(x, y) {
     let minX = x - Math.floor(toolSize / 2);
     let minY = y - Math.floor(toolSize / 2);
     return [minX, minY, minX + toolSize - 1, minY + toolSize - 1];
-}
-function StartSelection(action) {
-    selectState = SelectState.firstPoint;
-    selectAction = action;
 }
 //# sourceMappingURL=index.js.map

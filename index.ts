@@ -30,12 +30,38 @@ enum Tool {
     free, line, paintpot, rect, filledRect
 }
 
+enum SelectState {
+    disabled, firstPoint, secondPoint
+}
+
+enum SelectAction {
+    none, measure, copy, cut
+}
+
+enum ClickAction {
+    none, picker, paste, pasteTransparent
+}
+
 const toolIcons = [
     "icons/tool_free.png",
     "icons/tool_line.png",
     "icons/tool_paintpot.png",
     "icons/tool_rect.png",
     "icons/tool_filledrect.png",
+]
+
+const clickIcons = [
+    "",
+    "icons/click_picker.png",
+    "icons/select_copy.png",
+    "icons/click_pastetransparent.png",
+]
+
+const selectIcons = [
+    "",
+    "icons/select_measure.png",
+    "icons/select_copy.png",
+    "icons/select_copy.png",
 ]
 
 const infobarSize = 27; // px
@@ -78,7 +104,7 @@ let currentColor: Color;
 let currentAltColor = Color.FromRGB(0, 0, 0, 0);
 let currentTool = Tool.free;
 
-let usePicker = false;
+let clickAction = ClickAction.none;
 
 let commandHistory: Command[] = [];
 
@@ -92,14 +118,6 @@ let altColorUI : HTMLElement;
 let toolSize = 1;
 let toolSizeChangeTime = -1;
 const toolSizeDisplayDuration = 500; // ms
-
-enum SelectState {
-    disabled, firstPoint, secondPoint
-}
-
-enum SelectAction {
-    none, measure, copy, cut
-}
 
 let selectState = SelectState.disabled;
 let selectAction = SelectAction.none;
@@ -123,7 +141,7 @@ else
 canvas.addEventListener("contextmenu", event => event.preventDefault());
 
 // Setup
-OnColorChanged();
+UpdateToolbarIcons();
 InitUndo();
 SetTool(Tool.free);
 
@@ -279,22 +297,24 @@ function OnMouseDownCanvas()
 {
     CloseColorSelector();
 
-    if (usePicker)
+    if (clickAction == ClickAction.picker)
     {
         if (IsInImage(mouseX, mouseY))
             currentColor = imageData[mouseX + imageSizeX * mouseY];
 
-        usePicker = false;
+        UpdateToolbarIcons();
+
+        SetClickAction(ClickAction.none);
         Draw();
     }
-    else if (selectState == SelectState.disabled)
-    {
-        setTimeout(() => ApplyMouseTools(true), 0);
-    }
+
+    setTimeout(() => ApplyMouseTools(true), 0); // HACK: why timeout?
 }
 
 function OnMouseUpCanvas() 
 {
+    ApplyMouseTools(false);
+
     if (selectState == SelectState.firstPoint)
     {
         selectState = SelectState.secondPoint;
@@ -303,7 +323,7 @@ function OnMouseUpCanvas()
     }
     else if (selectState == SelectState.secondPoint)
     {
-        selectState = SelectState.disabled;
+        SetSelectAction(SelectAction.none);
 
         if (selectAction == SelectAction.copy || selectAction == SelectAction.cut)
         {
@@ -319,9 +339,7 @@ function OnMouseUpCanvas()
             }, mouseX, mouseY, selectStartX, selectStartY);
 
         }
-    }
-    else
-        ApplyMouseTools(false);
+    } 
 }
 
 function OnWheel(event: WheelEvent)
@@ -368,6 +386,8 @@ function OnWheel(event: WheelEvent)
 function ApplyMouseTools(preview: boolean)
 {
     if (!mouseLeft && !mouseRight) return;
+
+    if (clickAction != ClickAction.none || selectState != SelectState.disabled) return;
 
     let color = mouseLeft ? currentColor : currentAltColor;
 
@@ -416,18 +436,53 @@ function ApplyMouseTools(preview: boolean)
 function SetTool(tool: Tool)
 {
     currentTool = tool;
-    toolIcon.style.setProperty("background-image", `url(${toolIcons[tool]})`);
+    UpdateToolbarIcons();
 }
 
-function OnColorChanged()
+function SetClickAction(newClickAction: ClickAction)
+{
+    clickAction = newClickAction;
+    UpdateToolbarIcons();
+}
+
+function SetSelectAction(newSelectAction: SelectAction)
+{
+    selectAction = newSelectAction;
+
+    if (selectAction == SelectAction.none)
+        selectState = SelectState.disabled;
+    else
+        selectState = SelectState.firstPoint;
+    
+    UpdateToolbarIcons();
+}
+
+function UpdateToolbarIcons()
 {
     mainColorUI?.remove();
     altColorUI?.remove();
     mainColorUI = currentColor.GetColorUI();
     altColorUI = currentAltColor.GetColorUI();
 
-    infoIconsParent.appendChild(altColorUI);
     infoIconsParent.appendChild(mainColorUI);
+    infoIconsParent.appendChild(altColorUI);
+    
+    let imageName = "";
+
+    if (selectState != SelectState.disabled)
+    {
+        imageName = selectIcons[selectAction];
+    }
+    else if (clickAction != ClickAction.none)
+    {
+        imageName = clickIcons[clickAction];
+    }
+    else
+    {
+        imageName = toolIcons[currentTool];
+    }
+
+    toolIcon.style.setProperty("background-image", `url(${imageName})`);
 }
 
 function SetToolSizeRect(x: number, y: number, color: Color, temp = false)
@@ -585,7 +640,7 @@ function Draw()
 
     if (IsInImage(mouseX, mouseY)) // Draw square around current pixel
     {
-        if (usePicker || selectState == SelectState.firstPoint)
+        if (clickAction == ClickAction.picker || selectState == SelectState.firstPoint)
         {
             let [screenX, screenY] = PixelToScreen(mouseX, mouseY);
 
@@ -773,10 +828,4 @@ function GetToolRectWithSize(x: number, y: number) : [number, number, number, nu
     let minX = x - Math.floor(toolSize / 2);
     let minY = y - Math.floor(toolSize / 2);
     return [minX, minY, minX + toolSize - 1, minY + toolSize - 1];
-}
-
-function StartSelection(action: SelectAction)
-{
-    selectState = SelectState.firstPoint;
-    selectAction = action;
 }

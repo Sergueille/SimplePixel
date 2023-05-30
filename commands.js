@@ -98,12 +98,12 @@ Command.commands = [
         else
             mainInput.value += " "; // Add a space manually, because the shortcut prevents it
     }),
-    new Command("hide", 0, "Escape", CommandType.function, null, "Loose focus on command bar, hide panels", (_) => {
+    new Command("esc", 0, "Escape", CommandType.function, null, "Loose focus on command bar, hide panels", (_) => {
         mainInput.blur();
         CloseColorSelector();
         CloseExportPanel();
-        usePicker = false;
-        selectState = SelectState.disabled;
+        SetClickAction(ClickAction.none);
+        SetSelectAction(SelectAction.none);
     }),
     new Command("clear", shift | alt, "n", CommandType.function, null, "Clear image", (_) => {
         CreateImage(imageSizeX, imageSizeY);
@@ -114,13 +114,13 @@ Command.commands = [
     new Command("color", 0, "c", CommandType.function, null, "Set the current color", (_) => {
         OpenColorSelector((newColor) => {
             currentColor = newColor;
-            OnColorChanged();
+            UpdateToolbarIcons();
         }, currentColor);
     }),
     new Command("altcolor", alt, "c", CommandType.function, null, "Set the alternative color (right click color)", (_) => {
         OpenColorSelector((newColor) => {
             currentAltColor = newColor;
-            OnColorChanged();
+            UpdateToolbarIcons();
         }, currentAltColor);
     }),
     new Command("free", 0, "f", CommandType.function, null, "Select free draw tool", (_) => {
@@ -144,31 +144,31 @@ Command.commands = [
     }),
     new Command("seth", alt, "h", CommandType.float, 1, "Set the hue of the current color (0 - 1)", (val) => {
         currentColor.SetH(val);
-        OnColorChanged();
+        UpdateToolbarIcons();
     }),
     new Command("sets", alt, "s", CommandType.float, 1, "Set the saturation of the current color (0 - 1)", (val) => {
         currentColor.SetS(val);
-        OnColorChanged();
+        UpdateToolbarIcons();
     }),
     new Command("setv", alt, "v", CommandType.float, 1, "Set the value of the current color (0 - 1)", (val) => {
         currentColor.SetV(val);
-        OnColorChanged();
+        UpdateToolbarIcons();
     }),
     new Command("setr", alt, "r", CommandType.float, 1, "Set the red value of the current color (0 - 1)", (val) => {
         currentColor.r = val;
-        OnColorChanged();
+        UpdateToolbarIcons();
     }),
     new Command("setg", alt, "g", CommandType.float, 1, "Set the green value of the current color (0 - 1)", (val) => {
         currentColor.g = val;
-        OnColorChanged();
+        UpdateToolbarIcons();
     }),
     new Command("setb", alt, "b", CommandType.float, 1, "Set the blue value of the current color (0 - 1)", (val) => {
         currentColor.b = val;
-        OnColorChanged();
+        UpdateToolbarIcons();
     }),
     new Command("seta", alt, "a", CommandType.float, 1, "Set the alpha value of the current color (0 - 1)", (val) => {
         currentColor.a = val;
-        OnColorChanged();
+        UpdateToolbarIcons();
     }),
     new Command("undo", control, "z", CommandType.function, null, "Undo last action", (_) => {
         Undo();
@@ -186,7 +186,7 @@ Command.commands = [
         OpenExportPanel();
     }),
     new Command("colorpicker", 0, "x", CommandType.function, null, "Select a color from the image and set the current color", (_) => {
-        usePicker = true;
+        SetClickAction(ClickAction.picker);
     }),
     new Command("grid", control, "g", CommandType.vec2, new vec2(16, 16), "Displays a grid of the specified size", (vec) => {
         useGrid = true;
@@ -202,13 +202,19 @@ Command.commands = [
         LoadFile();
     }),
     new Command("mes", 0, "m", CommandType.function, null, "Measure a distance", (_) => {
-        StartSelection(SelectAction.measure);
+        SetSelectAction(SelectAction.measure);
     }),
     new Command("copy", control, "c", CommandType.function, null, "Copy a region", (_) => {
-        StartSelection(SelectAction.copy);
+        SetSelectAction(SelectAction.copy);
     }),
     new Command("cut", control, "x", CommandType.function, null, "Copy a region, then fill it with alt color", (_) => {
-        StartSelection(SelectAction.cut);
+        SetSelectAction(SelectAction.cut);
+    }),
+    new Command("paste", control, "v", CommandType.function, null, "Paste data from clipboard", (_) => {
+        SetClickAction(ClickAction.paste);
+    }),
+    new Command("pastetrans", control | shift, "v", CommandType.function, null, "Paste data from clipboard as a transparent image", (_) => {
+        SetClickAction(ClickAction.pasteTransparent);
     }),
 ];
 //# sourceMappingURL=commands.js.map

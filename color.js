@@ -142,7 +142,7 @@ class Color {
     }
     AlphaBlendWith(behind) {
         let res = this.BlendWith(behind, this.a);
-        res.a = 1;
+        res.a = this.a + behind.a * (1 - this.a);
         return res;
     }
     Equals(other, tolerance = 0.0005) {

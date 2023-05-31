@@ -244,17 +244,16 @@ function OnMouseUp(event) {
 function OnMouseMoveCanvas() {
     if (lastMouseX != mouseX || lastMouseY != mouseY)
         Draw();
+    if (clickAction == ClickAction.paste) {
+        Paste(false, true);
+    }
+    else if (clickAction == ClickAction.pasteTransparent) {
+        Paste(true, true);
+    }
     ApplyMouseTools(true);
 }
 function OnMouseDownCanvas() {
     CloseColorSelector();
-    if (clickAction == ClickAction.picker) {
-        if (IsInImage(mouseX, mouseY))
-            currentColor = imageData[mouseX + imageSizeX * mouseY];
-        UpdateToolbarIcons();
-        SetClickAction(ClickAction.none);
-        Draw();
-    }
     setTimeout(() => ApplyMouseTools(true), 0); // HACK: why timeout?
 }
 function OnMouseUpCanvas() {
@@ -265,8 +264,8 @@ function OnMouseUpCanvas() {
         selectStartY = mouseY;
     }
     else if (selectState == SelectState.secondPoint) {
-        SetSelectAction(SelectAction.none);
-        if (selectAction == SelectAction.copy || selectAction == SelectAction.cut) {
+        if (selectAction == SelectAction.copy || selectAction == SelectAction.cut) // copy
+         {
             [copySizeX, copySizeY] = GetRectSize(mouseX, mouseY, selectStartX, selectStartY);
             copyData = [];
             IterateThroughRect((x, y, coordX, coordY) => {
@@ -275,6 +274,24 @@ function OnMouseUpCanvas() {
                     imageData[coordX + coordY * imageSizeX] = currentAltColor.Copy();
             }, mouseX, mouseY, selectStartX, selectStartY);
         }
+        SetSelectAction(SelectAction.none);
+    }
+    else if (clickAction == ClickAction.picker) {
+        if (IsInImage(mouseX, mouseY))
+            currentColor = imageData[mouseX + imageSizeX * mouseY];
+        UpdateToolbarIcons();
+        SetClickAction(ClickAction.none);
+        Draw();
+    }
+    else if (clickAction == ClickAction.paste) {
+        Paste(false, false);
+        Draw();
+        SetClickAction(ClickAction.none);
+    }
+    else if (clickAction == ClickAction.pasteTransparent) {
+        Paste(true, false);
+        Draw();
+        SetClickAction(ClickAction.none);
     }
 }
 function OnWheel(event) {
@@ -468,6 +485,22 @@ function ScreenToPixel(x, y) {
         Math.floor((x - cornerPosX) / settings.pixelSize),
         Math.floor((y - cornerPosY) / settings.pixelSize),
     ];
+}
+function Paste(transparent, temp = false) {
+    if (!copyData || copyData.length == 0)
+        return;
+    let posX = mouseX - Math.floor(copySizeX / 2);
+    let posY = mouseY - Math.floor(copySizeY / 2);
+    IterateThroughRect((x, y, coordX, coordY) => {
+        if (!IsInImage(coordX, coordY))
+            return;
+        let color;
+        if (transparent)
+            color = copyData[x + y * copySizeX].AlphaBlendWith(GetPixel(coordX, coordY));
+        else
+            color = copyData[x + y * copySizeX];
+        SetPixel(coordX, coordY, color, temp);
+    }, posX, posY, posX + copySizeX - 1, posY + copySizeY - 1);
 }
 function Draw() {
     cornerPosX = window.innerWidth / 2 - imageSizeX * settings.pixelSize / 2;

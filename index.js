@@ -73,6 +73,8 @@ const selectIcons = [
 const infobarSize = 27; // px
 const lineColor = "#FF03F5";
 const grayLineColor = "#8885";
+const imageBorderCheckerSize = 35; // pixels
+const borderAlpha = 0.5;
 let settings = {
     pixelSize: 16,
     bgColorA: Color.FromHSV(0, 0, .10),
@@ -127,10 +129,12 @@ else
     currentColor = Color.FromRGB(0, 0, 0);
 canvas.addEventListener("contextmenu", event => event.preventDefault());
 // Setup
+ctx.imageSmoothingEnabled = false;
 UpdateToolbarIcons();
 InitUndo();
 SetTool(Tool.free);
 CreateImage(50, 50);
+// Events
 addEventListener("resize", OnResize);
 addEventListener("mousemove", OnMouseMove);
 addEventListener("mousedown", OnMouseDown);
@@ -503,6 +507,11 @@ function Paste(transparent, temp = false) {
     }, posX, posY, posX + copySizeX - 1, posY + copySizeY - 1);
 }
 function Draw() {
+    // Clear
+    let clearColor = (isDarkTheme ? settings.bgColorA : settings.bgColorAlight).BlendWith(Color.FromRGB(0, 0, 0, borderAlpha));
+    clearColor.a = 1;
+    ctx.fillStyle = clearColor.GetHex();
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
     cornerPosX = window.innerWidth / 2 - imageSizeX * settings.pixelSize / 2;
     cornerPosY = (window.innerHeight - infobarSize) / 2 - imageSizeY * settings.pixelSize / 2;
     let startX = Math.floor(-(canvasPixelSizeX - imageSizeX) / 2 - 1);
@@ -513,7 +522,7 @@ function Draw() {
                 DrawPixel(x, y, GetPixel(x, y));
             }
             else {
-                DrawPixel(x, y, Color.FromRGB(0, 0, 0, .5));
+                DrawPixel(x, y, Color.FromRGB(0, 0, 0, borderAlpha));
             }
         }
     }
@@ -599,15 +608,31 @@ function Draw() {
     }
 }
 function DrawPixel(x, y, color) {
+    let distX = 0;
+    let distY = 0;
+    if (x < 0)
+        distX = -x;
+    else if (x >= imageSizeX)
+        distX = x - imageSizeX + 1;
+    if (y < 0)
+        distY = -y;
+    else if (y >= imageSizeY)
+        distY = y - imageSizeY + 1;
+    let distFromImage = distX + distY;
+    if (distFromImage > imageBorderCheckerSize)
+        return;
     let bgColor;
     if ((x + y) % 2 == 0)
         bgColor = isDarkTheme ? settings.bgColorA : settings.bgColorAlight;
     else
         bgColor = isDarkTheme ? settings.bgColorB : settings.bgColorBlight;
+    if (distFromImage > 0)
+        bgColor = bgColor.BlendWith(isDarkTheme ? settings.bgColorA : settings.bgColorAlight, 1 - distFromImage / imageBorderCheckerSize);
     let drawColor = color.AlphaBlendWith(bgColor);
+    let delta = 0.5;
     let [screenX, screenY] = PixelToScreen(x, y);
     ctx.fillStyle = drawColor.GetHex();
-    ctx.fillRect(screenX, screenY, settings.pixelSize, settings.pixelSize);
+    ctx.fillRect(screenX - delta, screenY - delta, settings.pixelSize + delta, settings.pixelSize + delta);
 }
 function SwitchTheme() {
     if (isDarkTheme) {

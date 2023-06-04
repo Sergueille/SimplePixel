@@ -23,6 +23,34 @@ let exportFormatSelect = document.getElementById("export-format");
 let exportCropAlpha = document.getElementById("export-crop");
 let exportTile = document.getElementById("export-tile");
 let exportFilename = document.getElementById("export-name");
+let recentPanel = document.getElementById("recent-panel");
+let recentList = document.getElementById("recent-list");
+let clearBtn = document.getElementById("clear-history-btn");
+class ImageState {
+    static Get() {
+        let res = new ImageState();
+        res.data = [...imageData];
+        res.sizeX = imageSizeX;
+        res.sizeY = imageSizeY;
+        return res;
+    }
+    Set() {
+        imageData = [...this.data];
+        imageSizeX = this.sizeX;
+        imageSizeY = this.sizeY;
+        Draw();
+    }
+}
+class HistoryEntry extends ImageState {
+    static Get() {
+        let entry = super.Get();
+        entry.date = new Date();
+        return entry;
+    }
+    Set() {
+        super.Set();
+    }
+}
 var Tool;
 (function (Tool) {
     Tool[Tool["free"] = 0] = "free";
@@ -130,6 +158,7 @@ else
 canvas.addEventListener("contextmenu", event => event.preventDefault());
 // Setup
 ctx.imageSmoothingEnabled = false;
+InitHistory();
 UpdateToolbarIcons();
 InitUndo();
 SetTool(Tool.free);
@@ -181,6 +210,11 @@ exportButton.addEventListener("click", () => {
 });
 exportPanel.addEventListener("mousemove", () => {
     UpdateExportInputs();
+});
+// History.ts
+clearBtn.addEventListener("click", () => {
+    ClearHistory();
+    CloseRecentPanel();
 });
 OnResize();
 function CreateImage(sizeX, sizeY, keepOldData = false, recordUndo = true) {

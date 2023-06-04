@@ -26,6 +26,50 @@ let exportCropAlpha = document.getElementById("export-crop") as HTMLInputElement
 let exportTile = document.getElementById("export-tile") as HTMLInputElement;
 let exportFilename = document.getElementById("export-name") as HTMLInputElement;
 
+let recentPanel = document.getElementById("recent-panel")!!;
+let recentList = document.getElementById("recent-list")!!;
+let clearBtn = document.getElementById("clear-history-btn")!!;
+
+class ImageState
+{
+    public data: Color[];
+    public sizeX: number;
+    public sizeY: number;
+
+    public static Get() : ImageState
+    {
+        let res = new ImageState();
+        res.data = [...imageData];
+        res.sizeX = imageSizeX;
+        res.sizeY = imageSizeY;
+        return res;
+    }
+
+    public Set()
+    {
+        imageData = [...this.data];
+        imageSizeX = this.sizeX;
+        imageSizeY = this.sizeY;
+        Draw();
+    }
+}
+
+class HistoryEntry extends ImageState {
+    public date: Date;
+
+    public static Get() : HistoryEntry
+    {
+        let entry = super.Get() as HistoryEntry;
+        entry.date = new Date();
+        return entry;
+    }
+    
+    public Set()
+    {
+        super.Set();
+    }
+}
+
 enum Tool {
     free, line, paintpot, rect, filledRect
 }
@@ -146,6 +190,7 @@ canvas.addEventListener("contextmenu", event => event.preventDefault());
 
 ctx.imageSmoothingEnabled = false;
 
+InitHistory();
 UpdateToolbarIcons();
 InitUndo();
 SetTool(Tool.free);
@@ -202,6 +247,12 @@ exportButton.addEventListener("click", () => {
 });
 exportPanel.addEventListener("mousemove", () => {
     UpdateExportInputs();
+})
+
+// History.ts
+clearBtn.addEventListener("click", () => {
+    ClearHistory();
+    CloseRecentPanel();
 })
 
 OnResize();

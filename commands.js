@@ -102,11 +102,14 @@ Command.commands = [
         mainInput.blur();
         CloseColorSelector();
         CloseExportPanel();
+        CloseRecentPanel();
         SetClickAction(ClickAction.none);
         SetSelectAction(SelectAction.none);
+        SaveHistory();
     }),
     new Command("clear", shift | alt, "n", CommandType.function, null, "Clear image", (_) => {
         CreateImage(imageSizeX, imageSizeY);
+        CreateNewEntry();
     }),
     new Command("imgsize", shift, "n", CommandType.vec2, new vec2(50, 50), "Set size of image", (vec) => {
         CreateImage(vec.x, vec.y, true);
@@ -224,6 +227,9 @@ Command.commands = [
     }),
     new Command("mirrory", shift, "y", CommandType.function, null, "Mirror image vertically", (_) => {
         Mirror(false);
+    }),
+    new Command("recent", control, "r", CommandType.function, null, "Open a recent image", (_) => {
+        OpenRecentPanel();
     }),
 ];
 //# sourceMappingURL=commands.js.map

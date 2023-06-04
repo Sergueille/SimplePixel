@@ -55,12 +55,12 @@ class ImageState
 }
 
 class HistoryEntry extends ImageState {
-    public date: Date;
+    public date: number;
 
     public static Get() : HistoryEntry
     {
         let entry = super.Get() as HistoryEntry;
-        entry.date = new Date();
+        entry.date = Date.now();
         return entry;
     }
     
@@ -113,6 +113,7 @@ const lineColor = "#FF03F5";
 const grayLineColor = "#8885";
 const imageBorderCheckerSize = 35; // pixels
 const borderAlpha = 0.5;
+const maxHistoryEntries = 10;
 
 let settings = {
     pixelSize: 16,

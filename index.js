@@ -44,7 +44,7 @@ class ImageState {
 class HistoryEntry extends ImageState {
     static Get() {
         let entry = super.Get();
-        entry.date = new Date();
+        entry.date = Date.now();
         return entry;
     }
     Set() {
@@ -103,6 +103,7 @@ const lineColor = "#FF03F5";
 const grayLineColor = "#8885";
 const imageBorderCheckerSize = 35; // pixels
 const borderAlpha = 0.5;
+const maxHistoryEntries = 10;
 let settings = {
     pixelSize: 16,
     bgColorA: Color.FromHSV(0, 0, .10),

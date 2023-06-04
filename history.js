@@ -29,10 +29,13 @@ function SaveHistory() {
     else // Replace last entry
      {
         fileHistory[fileHistory.length - 1] = currentEntry;
+        if (fileHistory.length > maxHistoryEntries) {
+            fileHistory.shift();
+        }
     }
     localStorage.setItem("history", JSON.stringify(fileHistory));
 }
-function CreateNewEntry() {
+function CreateNewHistoryEntry() {
     registerNewEntry = true;
     SaveHistory();
 }
@@ -45,20 +48,33 @@ function CloseRecentPanel() {
 }
 function UpdateRecentFilesUI() {
     recentList.innerText = "";
+    if (fileHistory.length == 0) {
+        recentList.innerText = "No files here :(";
+        return;
+    }
     for (let entry of fileHistory) {
         let ui = document.createElement("div");
         ui.classList.add("recent-entry");
         let closureEntry = entry;
         ui.addEventListener("click", () => {
             closureEntry.Set();
-            CreateNewEntry();
+            CreateNewHistoryEntry();
             CloseRecentPanel();
         });
         let date = document.createElement("span");
-        date.innerText = entry.date.toLocaleString();
+        date.innerText = new Date(entry.date).toLocaleString();
         let canvas = document.createElement("canvas");
         canvas.classList.add("alpha-bg");
-        // TODO: draw canvas
+        canvas.width = 100;
+        canvas.height = 100;
+        let ctx = canvas.getContext("2d");
+        let pxSize = Math.min(canvas.width / entry.sizeX, canvas.height / entry.sizeY);
+        let cornerX = (canvas.width - entry.sizeX * pxSize) / 2;
+        let cornerY = (canvas.height - entry.sizeY * pxSize) / 2;
+        IterateThroughRect((x, y) => {
+            ctx.fillStyle = entry.data[x + y * entry.sizeX].GetHex();
+            ctx.fillRect(cornerX + x * pxSize, cornerY + y * pxSize, pxSize, pxSize);
+        }, 0, 0, entry.sizeX - 1, entry.sizeY - 1);
         ui.appendChild(canvas);
         ui.appendChild(date);
         recentList.appendChild(ui);

@@ -131,7 +131,7 @@ body {
 }
 
 .alpha-bg {
-    background: repeating-conic-gradient(#808080 0% 25%, #ddd 0% 50%) 50% / calc(4 * var(--pixel)) calc(4 * var(--pixel));
+    background: repeating-conic-gradient(#777 0% 25%, #bbb 0% 50%) 50% / calc(4 * var(--pixel)) calc(4 * var(--pixel));
 }
 
 #color-view {

@@ -109,7 +109,7 @@ Command.commands = [
     }),
     new Command("clear", shift | alt, "n", CommandType.function, null, "Clear image", (_) => {
         CreateImage(imageSizeX, imageSizeY);
-        CreateNewEntry();
+        CreateNewHistoryEntry();
     }),
     new Command("imgsize", shift, "n", CommandType.vec2, new vec2(50, 50), "Set size of image", (vec) => {
         CreateImage(vec.x, vec.y, true);
@@ -203,6 +203,7 @@ Command.commands = [
     }),
     new Command("open", control, "o", CommandType.function, null, "Load a file", (_) => {
         LoadFile();
+        CreateNewHistoryEntry();
     }),
     new Command("mes", 0, "m", CommandType.function, null, "Measure a distance", (_) => {
         SetSelectAction(SelectAction.measure);

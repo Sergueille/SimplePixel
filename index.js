@@ -683,4 +683,27 @@ function GetToolRectWithSize(x, y) {
     let minY = y - Math.floor(toolSize / 2);
     return [minX, minY, minX + toolSize - 1, minY + toolSize - 1];
 }
+function RotateImage() {
+    let copy = new Array(imageSizeX * imageSizeY);
+    IterateThroughRect((x, y) => {
+        let newX = y;
+        let newY = imageSizeX - x - 1;
+        copy[newX + newY * imageSizeY] = imageData[x + y * imageSizeX];
+    }, 0, 0, imageSizeX - 1, imageSizeY - 1);
+    imageData = copy;
+    [imageSizeX, imageSizeY] = [imageSizeY, imageSizeX];
+    Draw();
+    RecordUndo();
+}
+function Mirror(isX) {
+    let copy = new Array(imageSizeX * imageSizeY);
+    IterateThroughRect((x, y) => {
+        let newX = isX ? imageSizeX - x - 1 : x;
+        let newY = isX ? y : imageSizeY - y - 1;
+        copy[newX + newY * imageSizeX] = imageData[x + y * imageSizeX];
+    }, 0, 0, imageSizeX - 1, imageSizeY - 1);
+    imageData = copy;
+    Draw();
+    RecordUndo();
+}
 //# sourceMappingURL=index.js.map

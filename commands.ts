@@ -134,6 +134,15 @@ class Command
         new Command("pastetrans", control | shift, "v", CommandType.function, null, "Paste data from clipboard as a transparent image", (_) => {
             SetClickAction(ClickAction.pasteTransparent);
         }),
+        new Command("turn", shift, "t", CommandType.function, null, "Rotate the image by π/2", (_) => {
+            RotateImage();
+        }),
+        new Command("mirrorx", shift, "x", CommandType.function, null, "Mirror image horizontally", (_) => {
+            Mirror(true);
+        }),
+        new Command("mirrory", shift, "y", CommandType.function, null, "Mirror image vertically", (_) => {
+            Mirror(false);
+        }),
     ]
 
     public name: string;

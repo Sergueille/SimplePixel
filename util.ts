@@ -19,8 +19,3 @@ function IterateThroughRect(func: RectFunction, minX: number, minY: number, maxX
         }
     }
 }
-
-function GetDateText(date: Date)
-{
-    return ``
-}

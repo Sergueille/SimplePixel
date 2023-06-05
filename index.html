@@ -7,6 +7,7 @@
 
     <link rel="stylesheet" href="default.css">
     <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="tutorial.css">
 
     <script src="util.js" defer="defer"></script>
     <script src="color.js" defer="defer"></script>
@@ -17,6 +18,7 @@
     <script src="undo.js" defer="defer"></script>
     <script src="export.js" defer="defer"></script>
     <script src="search.js" defer="defer"></script>
+    <script src="tutorial.js" defer="defer"></script>
     <script src="index.js" defer="defer"></script>
 </head>
 <body>
@@ -111,5 +113,24 @@
         </div>
         <button class="margin" id="clear-history-btn">Clear history</button>
     </div>
+    <div id="tutorial">
+        <div class="tuto-inner">
+            <div id="tuto-title" class="margin">Welcome!</div>
+            <div id="tuto-text" class="margin">
+                Text text text, text text text text text text.
+                Text text text, text text text text text text.
+            </div>
+            <div id="tuto-btns" class="flex-row">
+                <button>Next</button>
+                <button>Dismiss tutorial</button>
+            </div>
+        </div>
+        <div id="tuto-progress" class="progress-bar">
+            <div class="bar-fill"></div>
+        </div>
+    </div>
+    <div id="tuto-left-anchor"></div>
+    <div id="tuto-right-anchor"></div>
+    <div id="tuto-highlight"></div>
 </body>
 </html>

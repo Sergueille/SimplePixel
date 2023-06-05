@@ -26,6 +26,12 @@ let exportFilename = document.getElementById("export-name");
 let recentPanel = document.getElementById("recent-panel");
 let recentList = document.getElementById("recent-list");
 let clearBtn = document.getElementById("clear-history-btn");
+let tutoPanel = document.getElementById("tutorial");
+let tutoTitle = document.getElementById("tuto-title");
+let tutoText = document.getElementById("tuto-text");
+let tutoProgressFill = document.querySelector("#tuto-progress > .bar-fill");
+let tutoButtonsContainer = document.getElementById("tuto-btns");
+let tutoHighlight = document.getElementById("tuto-highlight");
 class ImageState {
     static Get() {
         let res = new ImageState();
@@ -164,6 +170,7 @@ UpdateToolbarIcons();
 InitUndo();
 SetTool(Tool.free);
 CreateImage(50, 50);
+InitTutorial();
 // Events
 addEventListener("resize", OnResize);
 addEventListener("mousemove", OnMouseMove);

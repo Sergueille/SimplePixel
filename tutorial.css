@@ -1,0 +1,91 @@
+
+#tutorial {
+    transition: 200ms;
+
+    position: absolute;
+    top: 0;
+
+    background-color: var(--bg);
+    width: 400px;
+}
+
+#tutorial.hidden {
+    transform: scale(80%);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.tuto-inner {
+    display: flex;
+    flex-direction: column;
+    padding: calc(5 * var(--pixel));
+}
+
+#tuto-left-anchor {
+    position: absolute;
+    left: 50px;
+    top: 50%;
+
+    width: 0px;
+    height: 0px;
+}
+
+#tuto-right-anchor {
+    position: absolute;
+    right: 50px;
+    top: 50%;
+
+    width: 0px;
+    height: 0px;
+}
+
+.tuto-right {
+    right: 50px;
+}
+
+#tuto-title {
+    font-weight: bold;
+}
+
+.progress-bar {
+    width: 100%;
+    height: calc(2 * var(--pixel));
+    background-color: var(--bg-l);
+}
+
+.bar-fill {
+    height: 100%;
+    background-color: var(--prim);
+    transition: 200ms;
+    width: 100%;
+}
+
+#tuto-btns {
+    margin-top: calc(3 * var(--pixel));
+}
+
+#tuto-highlight {
+    pointer-events: none;
+    position: absolute;
+    background-color: #0f03;
+    outline: var(--pixel) solid var(--prim);
+    animation: 800ms infinite highlight-anim;
+    z-index: 100;
+}
+
+.tuto-command {
+    color: var(--txt-d);
+}
+
+@keyframes highlight-anim {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.2;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+

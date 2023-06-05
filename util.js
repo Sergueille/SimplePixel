@@ -11,7 +11,4 @@ function IterateThroughRect(func, minX, minY, maxX, maxY) {
         }
     }
 }
-function GetDateText(date) {
-    return ``;
-}
 //# sourceMappingURL=util.js.map

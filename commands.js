@@ -26,7 +26,7 @@ class Command {
         main.innerHTML = `
             <span>${this.name} <span class='command-type'>${this.GetTypeString()}</span></span>
             <span>${this.description}</span>
-            ${this.GetHotkeyString()}
+            <div class="command-hotkey">${this.GetHotkeyString()}</div>
         `;
         main.addEventListener("click", () => {
             if (this.type == CommandType.function) {
@@ -42,6 +42,15 @@ class Command {
     Execute(value) {
         if (value == null)
             value = this.default;
+        if (tutorialActive && forceTutorialCommand != this.name) // Prevent executing
+         {
+            infoLeft.textContent = `Can't execute command ${this.name} because the tutorial is active!`;
+            return;
+        }
+        else if (forceTutorialCommand == this.name) // Continue tutorial
+         {
+            NextTutorialStep();
+        }
         infoLeft.textContent = `Executing command: ${this.name}`;
         this.func(value);
         commandHistory = commandHistory.filter(c => c != this);
@@ -79,7 +88,7 @@ class Command {
             keyName = "Esc";
         else
             keyName = this.key.toUpperCase();
-        return `<div class="command-hotkey">${res}<span class='key'>${keyName}</span></div>`;
+        return `${res}<span class='key'>${keyName}</span>`;
     }
     GetTypeString() {
         if (this.type == CommandType.float)

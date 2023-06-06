@@ -241,5 +241,8 @@ Command.commands = [
     new Command("recent", control, "r", CommandType.function, null, "Open a recent image", (_) => {
         OpenRecentPanel();
     }),
+    new Command("tutorial", 0, "", CommandType.function, null, "Start tutorial", (_) => {
+        StartTutorial();
+    }),
 ];
 //# sourceMappingURL=commands.js.map

@@ -26,7 +26,7 @@ class TutoralState
 const tutorial = [
     new TutoralState(
         "Welcome!", 
-        "Welcome to simplePixel. This tutorial will show you the basics of the editor.", 
+        "Welcome to SimplePixel. This tutorial will show you the basics of the editor.", 
         "tuto-left-anchor",
         1,
         "",
@@ -158,7 +158,7 @@ const tutorial = [
     ),
     new TutoralState(
         "Commands with parameters", 
-        "Perfect! You can zoom out with <span class='key>Ctrl</span> + <span class='key>Mouse wheel</span>", 
+        "Perfect! You can zoom out with <span class='key'>Ctrl</span> + <span class='key'>Mouse wheel</span>", 
         "tuto-left-anchor",
         1,
     ),
@@ -182,7 +182,7 @@ const continueBtnTexts = [
 
 const tutorialMargin = 10; // Margin btw panel and anchor, in px
 
-let tutorialActive = true;
+let tutorialActive = false;
 let currentTutorialStateId = 0;
 let currentTutorialState = tutorial[currentTutorialStateId];
 
@@ -194,6 +194,16 @@ function InitTutorial() {
     // TODO: ignore if completed
 
     tutoHighlight.style.display = "none"; // Remove highlight
+
+    if (localStorage.getItem("finishedTutorial") == null)
+        StartTutorial();
+}
+
+function StartTutorial() {
+    tutorialActive = true;
+    currentTutorialStateId = 0;
+    
+    tutoPanel.classList.remove("hidden");
     UpdateTutoralPanel();
 }
 
@@ -248,10 +258,6 @@ function UpdateTutoralPanel() {
         continueBtn.addEventListener("click", NextTutorialStep);
 
         tutoButtonsContainer.appendChild(continueBtn);
-    }
-    else // Command to continue
-    {
-        // TODO        
     }
 
     if (currentTutorialState.btnText != "" && currentTutorialState.btnFunc != undefined) // Secondary button
@@ -324,13 +330,16 @@ function UpdateTutorialPosition()
 function NextTutorialStep() {
     currentTutorialStateId++;
 
-    if (currentTutorialStateId == tutorial.length) 
+    if (currentTutorialStateId == tutorial.length) {
+        localStorage.setItem("finishedTutorial", "true");
         CloseTutorial();
+    }
     else
         UpdateTutoralPanel();
 }
 
 function CloseTutorial() {
     tutoPanel.classList.add("hidden");
+    localStorage.setItem("finishedTutorial", "true");
     tutorialActive = false;
 }

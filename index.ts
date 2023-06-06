@@ -36,6 +36,7 @@ let tutoText = document.getElementById("tuto-text")!!;
 let tutoProgressFill = document.querySelector("#tuto-progress > .bar-fill") as HTMLElement;
 let tutoButtonsContainer = document.getElementById("tuto-btns")!!;
 let tutoHighlight = document.getElementById("tuto-highlight")!!;
+let closeTutoBtn = document.getElementById("close-tutorial")!!;
 
 class ImageState
 {
@@ -262,6 +263,10 @@ exportPanel.addEventListener("mousemove", () => {
 clearBtn.addEventListener("click", () => {
     ClearHistory();
     CloseRecentPanel();
+})
+
+closeTutoBtn.addEventListener("click", () => {
+    CloseTutorial();
 })
 
 OnResize();

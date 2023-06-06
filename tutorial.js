@@ -10,7 +10,7 @@ class TutoralState {
     }
 }
 const tutorial = [
-    new TutoralState("Welcome!", "Welcome to simplePixel. This tutorial will show you the basics of the editor.", "tuto-left-anchor", 1, "", "Ignore tutorial", () => CloseTutorial()),
+    new TutoralState("Welcome!", "Welcome to SimplePixel. This tutorial will show you the basics of the editor.", "tuto-left-anchor", 1, "", "Ignore tutorial", () => CloseTutorial()),
     new TutoralState("Drawing", "Use the left mouse button to draw with your primary color, and the right mouse button to draw with your secondary color.<br>By default, the secondary color is transparent so that it can be used for erasing.<br>Try drawing something before you continue!", "tuto-left-anchor", 1),
     new TutoralState("Drawing", "The primary and secondary colors are shown here.", "info-icons", 0),
     new TutoralState("Drawing", "You can also change the size of the stroke with the mouse wheel.", "tuto-right-anchor", 3),
@@ -30,7 +30,7 @@ const tutorial = [
     new TutoralState("Saving", "To continue your work the next time you come, you can:<br>- Load a file with [open]<br>- Open a recent file in the editor with [recent]", "tuto-left-anchor", 1),
     new TutoralState("Commands with parameters", "Some commands needs a parameter.<br>Press <span class='key'>Space</span>", "tuto-left-anchor", 1, "commandbar"),
     new TutoralState("Commands with parameters", "Search imgsize.<br>This commands needs one or two numbers, so enter 'imgsize 50' to get a larger canvas", "main-input", 1, "imgsize"),
-    new TutoralState("Commands with parameters", "Perfect! You can zoom out with <span class='key>Ctrl</span> + <span class='key>Mouse wheel</span>", "tuto-left-anchor", 1),
+    new TutoralState("Commands with parameters", "Perfect! You can zoom out with <span class='key'>Ctrl</span> + <span class='key'>Mouse wheel</span>", "tuto-left-anchor", 1),
     new TutoralState("Other commands", "We're almost done!<br>Here are some other important commands to know:<br>- [copy] and [paste]<br>- [grid] and [nogrid] to display a grid<br>- [theme] to change the editor's theme", "tuto-left-anchor", 1),
     new TutoralState("Congratulations", "The tutorial is finished!", "tuto-left-anchor", 1),
 ];
@@ -38,7 +38,7 @@ const continueBtnTexts = [
     "Continue", "Next", "Okay", "Next step"
 ];
 const tutorialMargin = 10; // Margin btw panel and anchor, in px
-let tutorialActive = true;
+let tutorialActive = false;
 let currentTutorialStateId = 0;
 let currentTutorialState = tutorial[currentTutorialStateId];
 let forceTutorialCommand = "";
@@ -46,6 +46,13 @@ setInterval(UpdateTutorialPosition, 20);
 function InitTutorial() {
     // TODO: ignore if completed
     tutoHighlight.style.display = "none"; // Remove highlight
+    if (localStorage.getItem("finishedTutorial") == null)
+        StartTutorial();
+}
+function StartTutorial() {
+    tutorialActive = true;
+    currentTutorialStateId = 0;
+    tutoPanel.classList.remove("hidden");
     UpdateTutoralPanel();
 }
 function UpdateTutoralPanel() {
@@ -85,10 +92,6 @@ function UpdateTutoralPanel() {
         continueBtn.innerText = text;
         continueBtn.addEventListener("click", NextTutorialStep);
         tutoButtonsContainer.appendChild(continueBtn);
-    }
-    else // Command to continue
-     {
-        // TODO        
     }
     if (currentTutorialState.btnText != "" && currentTutorialState.btnFunc != undefined) // Secondary button
      {
@@ -148,13 +151,16 @@ function UpdateTutorialPosition() {
 }
 function NextTutorialStep() {
     currentTutorialStateId++;
-    if (currentTutorialStateId == tutorial.length)
+    if (currentTutorialStateId == tutorial.length) {
+        localStorage.setItem("finishedTutorial", "true");
         CloseTutorial();
+    }
     else
         UpdateTutoralPanel();
 }
 function CloseTutorial() {
     tutoPanel.classList.add("hidden");
+    localStorage.setItem("finishedTutorial", "true");
     tutorialActive = false;
 }
 //# sourceMappingURL=tutorial.js.map

@@ -77,6 +77,23 @@
     color: var(--txt-d);
 }
 
+#close-tutorial {
+    position: absolute;
+    right: 0;
+    top: 0;
+
+    width: calc(6 * var(--pixel));
+    height: calc(6 * var(--pixel));
+
+    text-align: center;
+}
+
+#close-tutorial > span {
+    display: block;
+    transform: translate(calc(-0.8 * var(--pixel)), calc(-3 * var(--pixel)));
+    color: var(--txt-d);
+}
+
 @keyframes highlight-anim {
     0% {
         opacity: 1;

@@ -67,7 +67,7 @@ const tutorial = [
     new TutoralState(
         "Commands", 
         "Search \"turn\" and press <span class='key'>Enter</span>.", 
-        "tuto-left-anchor",
+        "main-input",
         1,
         "turn",
     ),
@@ -92,7 +92,7 @@ const tutorial = [
     ),
     new TutoralState(
         "Colors", 
-        "Now complete this masterpiece!", 
+        "Complete this masterpiece!", 
         "tuto-left-anchor",
         1,
     ),
@@ -118,7 +118,7 @@ const tutorial = [
     ),
     new TutoralState(
         "Undo", 
-        "No, it was not so bat after all, redo it with [redo]", 
+        "No, it was not so bad after all, redo it with [redo]", 
         "tuto-left-anchor",
         1,
         "redo"
@@ -128,11 +128,43 @@ const tutorial = [
         "This is beautiful! Save this masterpiece on your computer with [export].", 
         "tuto-left-anchor",
         1,
-        "save"
+        "export"
     ),
     new TutoralState(
         "Saving", 
-        "Select a name ", 
+        "Select export options and click export.", 
+        "tuto-left-anchor",
+        1,
+    ),
+    new TutoralState(
+        "Saving", 
+        "To continue your work the next time you come, you can:<br>- Load a file with [open]<br>- Open a recent file in the editor with [recent]", 
+        "tuto-left-anchor",
+        1,
+    ),
+    new TutoralState(
+        "Commands with parameters", 
+        "Some commands needs a parameter.<br>Press <span class='key'>Space</span>", 
+        "tuto-left-anchor",
+        1,
+        "commandbar",
+    ),
+    new TutoralState(
+        "Commands with parameters", 
+        "Search imgsize.<br>This commands needs one or two numbers, so enter 'imgsize 50' to get a larger canvas", 
+        "main-input",
+        1,
+        "imgsize",
+    ),
+    new TutoralState(
+        "Commands with parameters", 
+        "Perfect! You can zoom out with <span class='key>Ctrl</span> + <span class='key>Mouse wheel</span>", 
+        "tuto-left-anchor",
+        1,
+    ),
+    new TutoralState(
+        "Other commands", 
+        "We're almost done!<br>Here are some other important commands to know:<br>- [copy] and [paste]<br>- [grid] and [nogrid] to display a grid<br>- [theme] to change the editor's theme", 
         "tuto-left-anchor",
         1,
     ),
@@ -156,7 +188,7 @@ let currentTutorialState = tutorial[currentTutorialStateId];
 
 let forceTutorialCommand = "";
 
-setInterval(UpdateTutorialPosition, 100);
+setInterval(UpdateTutorialPosition, 20);
 
 function InitTutorial() {
     // TODO: ignore if completed

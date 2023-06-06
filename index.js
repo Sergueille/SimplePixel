@@ -111,7 +111,7 @@ const imageBorderCheckerSize = 35; // pixels
 const borderAlpha = 0.5;
 const maxHistoryEntries = 10;
 let settings = {
-    pixelSize: 16,
+    pixelSize: 20,
     bgColorA: Color.FromHSV(0, 0, .10),
     bgColorB: Color.FromHSV(0, 0, .05),
     bgColorAlight: Color.FromHSV(0, 0, 1),
@@ -169,7 +169,7 @@ InitHistory();
 UpdateToolbarIcons();
 InitUndo();
 SetTool(Tool.free);
-CreateImage(50, 50);
+CreateImage(32, 32);
 InitTutorial();
 // Events
 addEventListener("resize", OnResize);
@@ -300,6 +300,8 @@ function OnMouseMoveCanvas() {
 }
 function OnMouseDownCanvas() {
     CloseColorSelector();
+    CloseExportPanel();
+    CloseRecentPanel();
     setTimeout(() => ApplyMouseTools(true), 0); // HACK: why timeout?
 }
 function OnMouseUpCanvas() {

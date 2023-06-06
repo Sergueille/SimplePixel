@@ -204,7 +204,7 @@ class Command
         if (value == null) 
             value = this.default 
 
-        if (tutorialActive && forceTutorialCommand != this.name) // Prevent executing
+        if (tutorialActive && forceTutorialCommand != this.name && this.name != "commandbar" && this.name != "esc") // Prevent executing (except for esc and commandbar)
         {
             infoLeft.textContent = `Can't execute command ${this.name} because the tutorial is active!`
             return;

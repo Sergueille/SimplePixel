@@ -42,12 +42,15 @@ class Command {
     Execute(value) {
         if (value == null)
             value = this.default;
-        if (tutorialActive && forceTutorialCommand != this.name && this.name != "commandbar" && this.name != "esc") // Prevent executing (except for esc and commandbar)
+        let isContinueTutorialCommand = forceTutorialCommand == this.name;
+        let isAllowedByTutorial = currentTutorialState.allowedCommands.split(" ").some(cmd => cmd == this.name);
+        let isEscOrCommandbar = this.name == "commandbar" || this.name == "esc";
+        if (tutorialActive && !isContinueTutorialCommand && !isAllowedByTutorial && !isEscOrCommandbar) // Prevent executing (except for esc and commandbar)
          {
             infoLeft.textContent = `Can't execute command ${this.name} because the tutorial is active!`;
             return;
         }
-        else if (forceTutorialCommand == this.name) // Continue tutorial
+        else if (isContinueTutorialCommand) // Continue tutorial
          {
             NextTutorialStep();
         }
@@ -102,6 +105,9 @@ class Command {
 }
 Command.commands = [
     new Command("commandbar", 0, " ", CommandType.function, null, "Focus on command bar", (_) => {
+        CloseColorSelector();
+        CloseExportPanel();
+        CloseRecentPanel();
         if (mainInput != document.activeElement)
             mainInput.focus();
         else

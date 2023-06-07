@@ -10,8 +10,9 @@ class TutoralState
     public position: number; // 0: up, 1: right, 2: down, 3: left
 
     public continueCommand: string;
+    public allowedCommands: string;
 
-    public constructor(title: string, text: string, anchorId: string, position: number, continueCommand = "", btnText = "", btnFunc: Function | undefined = undefined)
+    public constructor(title: string, text: string, anchorId: string, position: number, continueCommand = "", allowedCommands="", btnText = "", btnFunc: Function | undefined = undefined)
     {
         this.title = title;
         this.text = text;
@@ -20,6 +21,7 @@ class TutoralState
         this.anchorId = anchorId;
         this.position = position;
         this.continueCommand = continueCommand;
+        this.allowedCommands = allowedCommands;
     }
 }
 
@@ -29,7 +31,7 @@ const tutorial = [
         "Welcome to SimplePixel. This tutorial will show you the basics of the editor.", 
         "tuto-left-anchor",
         1,
-        "",
+        "", "",
         "Ignore tutorial", () => CloseTutorial(),
     ),
     new TutoralState(
@@ -76,6 +78,7 @@ const tutorial = [
         "You can change the current tool with these commands:<br>- [free] Draw freely (default)<br>- [line] Draw line<br>- [rect] Draw rect<br>- [paintpot] Fill area with same color<br>", 
         "tuto-left-anchor",
         1,
+        "", "free line rect paintpot"
     ),
     new TutoralState(
         "Colors", 
@@ -89,6 +92,7 @@ const tutorial = [
         "Now select a nice color!", 
         "color-select",
         1,
+        "", "color"
     ),
     new TutoralState(
         "Colors", 
@@ -108,6 +112,7 @@ const tutorial = [
         "Select a color on the image with your mouse", 
         "tuto-left-anchor",
         1,
+        "", "colorpicker"
     ),
     new TutoralState(
         "Undo", 
@@ -135,12 +140,14 @@ const tutorial = [
         "Select export options and click export.", 
         "tuto-left-anchor",
         1,
+        "", "export"
     ),
     new TutoralState(
         "Saving", 
         "To continue your work the next time you come, you can:<br>- Load a file with [open]<br>- Open a recent file in the editor with [recent]", 
         "tuto-left-anchor",
         1,
+        "", "open recent"
     ),
     new TutoralState(
         "Commands with parameters", 
@@ -158,7 +165,7 @@ const tutorial = [
     ),
     new TutoralState(
         "Commands with parameters", 
-        "Perfect! You can zoom out with <span class='key'>Ctrl</span> + <span class='key'>Mouse wheel</span>", 
+        "Perfect! You can zoom out with <span class='key'>Ctrl</span> + Mouse wheel", 
         "tuto-left-anchor",
         1,
     ),
@@ -167,6 +174,7 @@ const tutorial = [
         "We're almost done!<br>Here are some other important commands to know:<br>- [copy] and [paste]<br>- [grid] and [nogrid] to display a grid<br>- [theme] to change the editor's theme", 
         "tuto-left-anchor",
         1,
+        "", "copy paste grid nogrid theme"
     ),
     new TutoralState(
         "Congratulations", 

@@ -41,11 +41,11 @@ function SaveHistory()
     else // Replace last entry
     {
         fileHistory[fileHistory.length - 1] = currentEntry;
+    }
 
-        if (fileHistory.length > maxHistoryEntries)
-        {
-            fileHistory.shift();
-        }
+    if (fileHistory.length > maxHistoryEntries)
+    {
+        fileHistory.shift();
     }
 
     localStorage.setItem("history", JSON.stringify(fileHistory));

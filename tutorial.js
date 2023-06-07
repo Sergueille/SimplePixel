@@ -1,5 +1,5 @@
 class TutoralState {
-    constructor(title, text, anchorId, position, continueCommand = "", btnText = "", btnFunc = undefined) {
+    constructor(title, text, anchorId, position, continueCommand = "", allowedCommands = "", btnText = "", btnFunc = undefined) {
         this.title = title;
         this.text = text;
         this.btnText = btnText;
@@ -7,31 +7,32 @@ class TutoralState {
         this.anchorId = anchorId;
         this.position = position;
         this.continueCommand = continueCommand;
+        this.allowedCommands = allowedCommands;
     }
 }
 const tutorial = [
-    new TutoralState("Welcome!", "Welcome to SimplePixel. This tutorial will show you the basics of the editor.", "tuto-left-anchor", 1, "", "Ignore tutorial", () => CloseTutorial()),
+    new TutoralState("Welcome!", "Welcome to SimplePixel. This tutorial will show you the basics of the editor.", "tuto-left-anchor", 1, "", "", "Ignore tutorial", () => CloseTutorial()),
     new TutoralState("Drawing", "Use the left mouse button to draw with your primary color, and the right mouse button to draw with your secondary color.<br>By default, the secondary color is transparent so that it can be used for erasing.<br>Try drawing something before you continue!", "tuto-left-anchor", 1),
     new TutoralState("Drawing", "The primary and secondary colors are shown here.", "info-icons", 0),
     new TutoralState("Drawing", "You can also change the size of the stroke with the mouse wheel.", "tuto-right-anchor", 3),
     new TutoralState("Commands", "To perform other actions, you will have to run a command, usually with a keyboard shortcut.<br>Try to execute [mirrorx].", "tuto-right-anchor", 3, "mirrorx"),
     new TutoralState("Commands", "Your image has been mirrored!<br>But if you forgot the keyboard shortcut for your command, don't panic! Press <span class='key'>Space</span>!", "tuto-right-anchor", 3, "commandbar"),
     new TutoralState("Commands", "Search \"turn\" and press <span class='key'>Enter</span>.", "main-input", 1, "turn"),
-    new TutoralState("Tools", "You can change the current tool with these commands:<br>- [free] Draw freely (default)<br>- [line] Draw line<br>- [rect] Draw rect<br>- [paintpot] Fill area with same color<br>", "tuto-left-anchor", 1),
+    new TutoralState("Tools", "You can change the current tool with these commands:<br>- [free] Draw freely (default)<br>- [line] Draw line<br>- [rect] Draw rect<br>- [paintpot] Fill area with same color<br>", "tuto-left-anchor", 1, "", "free line rect paintpot"),
     new TutoralState("Colors", "To change the color, use [color]", "tuto-left-anchor", 1, "color"),
-    new TutoralState("Colors", "Now select a nice color!", "color-select", 1),
+    new TutoralState("Colors", "Now select a nice color!", "color-select", 1, "", "color"),
     new TutoralState("Colors", "Complete this masterpiece!", "tuto-left-anchor", 1),
     new TutoralState("Colors", "To reuse a previous color, use the color picker, with [colorpicker].", "tuto-left-anchor", 1, "colorpicker"),
-    new TutoralState("Colors", "Select a color on the image with your mouse", "tuto-left-anchor", 1),
+    new TutoralState("Colors", "Select a color on the image with your mouse", "tuto-left-anchor", 1, "", "colorpicker"),
     new TutoralState("Undo", "Mmm... The last change you made doesn't seem right. Undo it with [undo]", "tuto-left-anchor", 1, "undo"),
     new TutoralState("Undo", "No, it was not so bad after all, redo it with [redo]", "tuto-left-anchor", 1, "redo"),
     new TutoralState("Saving", "This is beautiful! Save this masterpiece on your computer with [export].", "tuto-left-anchor", 1, "export"),
-    new TutoralState("Saving", "Select export options and click export.", "tuto-left-anchor", 1),
-    new TutoralState("Saving", "To continue your work the next time you come, you can:<br>- Load a file with [open]<br>- Open a recent file in the editor with [recent]", "tuto-left-anchor", 1),
+    new TutoralState("Saving", "Select export options and click export.", "tuto-left-anchor", 1, "", "export"),
+    new TutoralState("Saving", "To continue your work the next time you come, you can:<br>- Load a file with [open]<br>- Open a recent file in the editor with [recent]", "tuto-left-anchor", 1, "", "open recent"),
     new TutoralState("Commands with parameters", "Some commands needs a parameter.<br>Press <span class='key'>Space</span>", "tuto-left-anchor", 1, "commandbar"),
     new TutoralState("Commands with parameters", "Search imgsize.<br>This commands needs one or two numbers, so enter 'imgsize 50' to get a larger canvas", "main-input", 1, "imgsize"),
-    new TutoralState("Commands with parameters", "Perfect! You can zoom out with <span class='key'>Ctrl</span> + <span class='key'>Mouse wheel</span>", "tuto-left-anchor", 1),
-    new TutoralState("Other commands", "We're almost done!<br>Here are some other important commands to know:<br>- [copy] and [paste]<br>- [grid] and [nogrid] to display a grid<br>- [theme] to change the editor's theme", "tuto-left-anchor", 1),
+    new TutoralState("Commands with parameters", "Perfect! You can zoom out with <span class='key'>Ctrl</span> + Mouse wheel", "tuto-left-anchor", 1),
+    new TutoralState("Other commands", "We're almost done!<br>Here are some other important commands to know:<br>- [copy] and [paste]<br>- [grid] and [nogrid] to display a grid<br>- [theme] to change the editor's theme", "tuto-left-anchor", 1, "", "copy paste grid nogrid theme"),
     new TutoralState("Congratulations", "The tutorial is finished!", "tuto-left-anchor", 1),
 ];
 const continueBtnTexts = [

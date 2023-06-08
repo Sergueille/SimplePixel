@@ -126,6 +126,10 @@ class Color {
         this.SetHSV(this.GetH(), this.GetS(), v);
         return this;
     }
+    SetA(a) {
+        this.a = a;
+        return this;
+    }
     Copy() {
         return Color.FromRGB(this.r, this.g, this.b, this.a);
     }

@@ -31,18 +31,23 @@ function OnSelectViewClick(event) {
     let hue = (event.clientX - rect.x) / rect.width;
     let saturation = (event.clientY - rect.y) / rect.height;
     SetColor(Color.FromHSV(hue, saturation, color.GetV(), color.a));
-    colorSelectKnob.style.left = (hue * 300 - 3).toString();
-    colorSelectKnob.style.top = (saturation * 300 - 3).toString();
 }
 function SetColor(newColor) {
     color = newColor;
     colorSelectCallback(color);
     if (colorSelectHexInput != document.activeElement)
         colorSelectHexInput.value = color.GetHex(false, false);
-    colorSelectHInput.value = GetFloatText(color.GetH());
-    colorSelectSInput.value = GetFloatText(color.GetS());
-    colorSelectVInput.value = GetFloatText(color.GetV());
-    colorSelectAInput.value = GetFloatText(color.a);
+    let setInput = (input, value) => {
+        if (document.activeElement == input)
+            return; // User is writing
+        if (parseFloat(input.value) == value)
+            return; // Already same value in a different format, don't need to change
+        input.value = GetFloatText(value);
+    };
+    setInput(colorSelectHInput, color.GetH());
+    setInput(colorSelectSInput, color.GetS());
+    setInput(colorSelectVInput, color.GetV());
+    setInput(colorSelectAInput, color.a);
     colorSelectSlider.value = GetFloatText(color.GetV());
     colorSelectAlphaSlider.value = GetFloatText(color.a);
     colorSelectPreview.style.backgroundColor = color.GetHex();
@@ -56,6 +61,9 @@ function SetColor(newColor) {
     colorSelectSlider.style.setProperty("--color-b", value1color.GetHex());
     colorSelectAlphaSlider.style.setProperty("--color-a", a0color.GetHex());
     colorSelectAlphaSlider.style.setProperty("--color-b", a1color.GetHex());
+    // Update knob position
+    colorSelectKnob.style.left = (color.GetH() * 300 - 3).toString();
+    colorSelectKnob.style.top = (color.GetS() * 300 - 3).toString();
     DrawView();
 }
 function GetFloatText(value) {
@@ -70,5 +78,15 @@ function DrawView() {
             viewContext.fillRect(h * 300, s * 300, pixelSize, pixelSize);
         }
     }
+}
+function HandleColorInput(event, setFunc) {
+    let input = (event.target);
+    let value = parseFloat(input.value);
+    if (isNaN(value))
+        return;
+    if (value < 0 || value > 1)
+        return;
+    setFunc(value);
+    SetColor(color);
 }
 //# sourceMappingURL=colorSelect.js.map

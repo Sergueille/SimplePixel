@@ -229,13 +229,10 @@ mainInput.addEventListener("blur", OnSearchBlur);
 mainInput.addEventListener("input", OnSearchChange);
 
 // colorSelect.ts
-colorSelectHInput.addEventListener("input", () => SetColor(color.SetH(parseFloat(colorSelectHInput.value))));
-colorSelectSInput.addEventListener("input", () => SetColor(color.SetS(parseFloat(colorSelectSInput.value))));
-colorSelectVInput.addEventListener("input", () => SetColor(color.SetV(parseFloat(colorSelectVInput.value))));
-colorSelectAInput.addEventListener("input", () => {
-    color.a = parseFloat(colorSelectAInput.value);
-    SetColor(color);
-});
+colorSelectHInput.addEventListener("input", (e) => HandleColorInput(e, h => color.SetH(h)));
+colorSelectSInput.addEventListener("input", (e) => HandleColorInput(e, s => color.SetS(s)));
+colorSelectVInput.addEventListener("input", (e) => HandleColorInput(e, v => color.SetV(v)));
+colorSelectAInput.addEventListener("input", (e) => HandleColorInput(e, a => color.SetA(a)));
 colorSelectSlider.addEventListener("change", () => SetColor(color.SetV(parseFloat(colorSelectSlider.value))));
 colorSelectSlider.addEventListener("mousemove", () => SetColor(color.SetV(parseFloat(colorSelectSlider.value))));
 colorSelectAlphaSlider.addEventListener("change", () => {

@@ -145,6 +145,12 @@ class Color
         return this;
     }
 
+    public SetA(a: number)
+    {
+        this.a = a;
+        return this;
+    }
+
     public Copy() : Color
     {
         return Color.FromRGB(this.r, this.g, this.b, this.a);

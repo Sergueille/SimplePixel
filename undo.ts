@@ -1,12 +1,15 @@
 
 let undoStack: ImageState[];
-let undoPosition: number
+let undoPosition: number;
 
 function InitUndo()
 {
     // First image is created by the first CreateImage()
     undoStack = [];
     undoPosition = -1;
+
+    let saved = localStorage.getItem("undoMaxEntries");
+    settings.maxUndoEntries = saved == null ? 200 : parseInt(saved);
 }
 
 function RecordUndo()
@@ -16,6 +19,12 @@ function RecordUndo()
 
     undoStack.push(ImageState.Get());
     undoPosition++;
+
+    while (undoStack.length > settings.maxUndoEntries)
+    {
+        undoStack.shift();
+        undoPosition--;
+    }
 
     SaveHistory();
 }

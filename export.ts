@@ -54,8 +54,6 @@ function ExportImage()
             }
         }
 
-        console.log(minX, maxX, minY, maxY);
-
         if (minX <= maxX && minY <= maxY)
         {
             startX = minX;

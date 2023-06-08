@@ -18,7 +18,6 @@ function ToggleTabindexRecursive(parent, value) {
     else {
         parent.setAttribute("tabindex", "-1");
     }
-    console.log(value ? "enable" : "disable");
     for (let child of parent.children) {
         ToggleTabindexRecursive(child, value);
     }

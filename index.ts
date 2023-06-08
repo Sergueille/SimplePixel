@@ -130,6 +130,7 @@ let settings = {
     bgColorAlight: Color.FromHSV(0, 0, 1),
     bgColorBlight: Color.FromHSV(0, 0, .9),
     maxSearchResults: 10,
+    maxUndoEntries: 200,
 }
 
 let ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
@@ -934,7 +935,6 @@ function LoadFile()
                 loadCtx.drawImage(image, 0, 0);
 
                 let fileData = loadCtx.getImageData(0, 0, loadCanvas.width, loadCanvas.height).data;
-                console.log(fileData);
                 CreateImage(loadCanvas.width, loadCanvas.height, false, false);
 
                 for (let x = 0; x < loadCanvas.width; x++)

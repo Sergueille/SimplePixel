@@ -67,7 +67,6 @@ function UpdateTutoralPanel() {
         match = regex.exec(currentTutorialState.text);
         if (match == null)
             break;
-        console.log(match, lastMatch);
         let command = GetCommandByName(match[0].slice(1, -1));
         let commandText = `<span class="tuto-command">${command.name}<span> (${command.GetHotkeyString()})`;
         newText += currentTutorialState.text.slice(lastMatch == null ? 0 : lastMatch.index + lastMatch[0].length, match.index);

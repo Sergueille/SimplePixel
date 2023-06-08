@@ -250,5 +250,9 @@ Command.commands = [
     new Command("tutorial", 0, "", CommandType.function, null, "Start tutorial", (_) => {
         StartTutorial();
     }),
+    new Command("maxundoentries", 0, "", CommandType.int, 200, "Set the maximum amount of undo entries (use lower values to save memory)", (value) => {
+        localStorage.setItem("undoMaxEntries", value);
+        settings.maxUndoEntries = value;
+    }),
 ];
 //# sourceMappingURL=commands.js.map

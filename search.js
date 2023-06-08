@@ -2,6 +2,7 @@ function OnSearchFocus() {
     UpdateSearchResults();
     mainInput.select();
     searchResults.classList.remove("hidden");
+    ToggleTabindexRecursive(searchResults, true);
 }
 function OnSearchBlur() {
     setTimeout(() => {
@@ -9,6 +10,7 @@ function OnSearchBlur() {
             return;
         searchResults.classList.add("hidden");
     }, 200);
+    ToggleTabindexRecursive(searchResults, false);
 }
 function OnSearchChange() {
     UpdateSearchResults();

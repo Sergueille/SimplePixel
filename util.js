@@ -11,4 +11,16 @@ function IterateThroughRect(func, minX, minY, maxX, maxY) {
         }
     }
 }
+function ToggleTabindexRecursive(parent, value) {
+    if (value) {
+        parent.removeAttribute("tabindex");
+    }
+    else {
+        parent.setAttribute("tabindex", "-1");
+    }
+    console.log(value ? "enable" : "disable");
+    for (let child of parent.children) {
+        ToggleTabindexRecursive(child, value);
+    }
+}
 //# sourceMappingURL=util.js.map

@@ -11,11 +11,14 @@ function OpenExportPanel()
             exportFilename.select();
         }
     }, 200);
+
+    ToggleTabindexRecursive(exportPanel, true);
 }
 
 function CloseExportPanel()
 {
     exportPanel.classList.add("hidden");
+    ToggleTabindexRecursive(exportPanel, false);
 }
 
 function UpdateExportInputs()

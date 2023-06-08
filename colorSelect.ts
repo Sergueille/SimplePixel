@@ -22,12 +22,15 @@ function OpenColorSelector(colorCallback: Function, auto: Color | null = null)
             colorSelectHexInput.select();
         }
     }, 200);
+
+    ToggleTabindexRecursive(colorSelect, true);
 }
 
 function CloseColorSelector()
 {
     (document.activeElement as any).blur();
     colorSelect.classList.add("hidden");
+    ToggleTabindexRecursive(colorSelect, false);
 }
 
 function OnSelectViewClick(event: MouseEvent)

@@ -45,7 +45,6 @@ let currentTutorialState = tutorial[currentTutorialStateId];
 let forceTutorialCommand = "";
 setInterval(UpdateTutorialPosition, 20);
 function InitTutorial() {
-    // TODO: ignore if completed
     tutoHighlight.style.display = "none"; // Remove highlight
     if (localStorage.getItem("finishedTutorial") == null)
         StartTutorial();

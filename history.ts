@@ -60,6 +60,7 @@ function CreateNewHistoryEntry()
 function OpenRecentPanel()
 {
     recentPanel.classList.remove("hidden");
+    ToggleTabindexRecursive(recentPanel, true);
 
     UpdateRecentFilesUI();
 }
@@ -67,6 +68,7 @@ function OpenRecentPanel()
 function CloseRecentPanel()
 {
     recentPanel.classList.add("hidden");
+    ToggleTabindexRecursive(recentPanel, false);
 }
 
 function UpdateRecentFilesUI()

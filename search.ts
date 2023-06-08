@@ -3,6 +3,8 @@ function OnSearchFocus()
     UpdateSearchResults();
     mainInput.select();
     searchResults.classList.remove("hidden");
+
+    ToggleTabindexRecursive(searchResults, true);
 }
 
 function OnSearchBlur()
@@ -12,6 +14,8 @@ function OnSearchBlur()
 
         searchResults.classList.add("hidden");
     }, 200);
+
+    ToggleTabindexRecursive(searchResults, false);
 }
 
 function OnSearchChange()

@@ -206,6 +206,11 @@ SetTool(Tool.free);
 CreateImage(32, 32);
 InitTutorial();
 
+OnSearchBlur();
+CloseColorSelector();
+CloseExportPanel();
+CloseRecentPanel();
+
 // Events
 addEventListener("resize", OnResize);
 addEventListener("mousemove", OnMouseMove);

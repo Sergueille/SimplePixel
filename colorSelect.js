@@ -17,10 +17,12 @@ function OpenColorSelector(colorCallback, auto = null) {
             colorSelectHexInput.select();
         }
     }, 200);
+    ToggleTabindexRecursive(colorSelect, true);
 }
 function CloseColorSelector() {
     document.activeElement.blur();
     colorSelect.classList.add("hidden");
+    ToggleTabindexRecursive(colorSelect, false);
 }
 function OnSelectViewClick(event) {
     if (!mouseLeft)

@@ -11,7 +11,7 @@ function OpenColorSelector(colorCallback: Function, auto: Color | null = null)
     viewContext = colorSelectView.getContext("2d")!!;
 
     if (auto == null) color = Color.FromRGB(1, 1, 1);
-    else color = auto!!;
+    else color = auto!!.Copy();
 
     SetColor(color);
     

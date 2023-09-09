@@ -9,7 +9,7 @@ function OpenColorSelector(colorCallback, auto = null) {
     if (auto == null)
         color = Color.FromRGB(1, 1, 1);
     else
-        color = auto;
+        color = auto.Copy();
     SetColor(color);
     setTimeout(() => {
         if (!colorSelect.classList.contains("hidden")) {

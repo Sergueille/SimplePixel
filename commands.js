@@ -203,8 +203,11 @@ Command.commands = [
     new Command("export", control, "s", CommandType.function, null, "Export image as a file", (_) => {
         OpenExportPanel();
     }),
-    new Command("colorpicker", 0, "x", CommandType.function, null, "Select a color from the image and set the current color", (_) => {
+    new Command("colorpicker", 0, "x", CommandType.function, null, "Sets the current color to a color form the image", (_) => {
         SetClickAction(ClickAction.picker);
+    }),
+    new Command("altpicker", alt, "x", CommandType.function, null, "Sets the alternative color to a color form the image", (_) => {
+        SetClickAction(ClickAction.altpicker);
     }),
     new Command("grid", control, "g", CommandType.vec2, new vec2(16, 16), "Displays a grid of the specified size", (vec) => {
         useGrid = true;

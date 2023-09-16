@@ -84,8 +84,9 @@ var ClickAction;
 (function (ClickAction) {
     ClickAction[ClickAction["none"] = 0] = "none";
     ClickAction[ClickAction["picker"] = 1] = "picker";
-    ClickAction[ClickAction["paste"] = 2] = "paste";
-    ClickAction[ClickAction["pasteTransparent"] = 3] = "pasteTransparent";
+    ClickAction[ClickAction["altpicker"] = 2] = "altpicker";
+    ClickAction[ClickAction["paste"] = 3] = "paste";
+    ClickAction[ClickAction["pasteTransparent"] = 4] = "pasteTransparent";
 })(ClickAction || (ClickAction = {}));
 const toolIcons = [
     "icons/tool_free.png",
@@ -96,6 +97,7 @@ const toolIcons = [
 ];
 const clickIcons = [
     "",
+    "icons/click_picker.png",
     "icons/click_picker.png",
     "icons/select_copy.png",
     "icons/click_pastetransparent.png",
@@ -335,9 +337,13 @@ function OnMouseUpCanvas() {
         }
         SetSelectAction(SelectAction.none);
     }
-    else if (clickAction == ClickAction.picker) {
-        if (IsInImage(mouseX, mouseY))
-            currentColor = imageData[mouseX + imageSizeX * mouseY];
+    else if (clickAction == ClickAction.picker || clickAction == ClickAction.altpicker) {
+        if (IsInImage(mouseX, mouseY)) {
+            if (clickAction == ClickAction.picker)
+                currentColor = imageData[mouseX + imageSizeX * mouseY];
+            else
+                currentAltColor = imageData[mouseX + imageSizeX * mouseY];
+        }
         UpdateToolbarIcons();
         SetClickAction(ClickAction.none);
         Draw();
@@ -583,7 +589,7 @@ function Draw() {
     }
     if (IsInImage(mouseX, mouseY)) // Draw square around current pixel
      {
-        if (clickAction == ClickAction.picker || selectState == SelectState.firstPoint) {
+        if (clickAction == ClickAction.picker || clickAction == ClickAction.altpicker || selectState == SelectState.firstPoint) {
             let [screenX, screenY] = PixelToScreen(mouseX, mouseY);
             ctx.strokeStyle = lineColor;
             ctx.lineWidth = 2;

@@ -92,7 +92,7 @@ enum SelectAction {
 }
 
 enum ClickAction {
-    none, picker, paste, pasteTransparent
+    none, picker, altpicker, paste, pasteTransparent
 }
 
 const toolIcons = [
@@ -105,6 +105,7 @@ const toolIcons = [
 
 const clickIcons = [
     "",
+    "icons/click_picker.png",
     "icons/click_picker.png",
     "icons/select_copy.png",
     "icons/click_pastetransparent.png",
@@ -419,10 +420,15 @@ function OnMouseUpCanvas()
 
         SetSelectAction(SelectAction.none);
     }     
-    else if (clickAction == ClickAction.picker)
+    else if (clickAction == ClickAction.picker || clickAction == ClickAction.altpicker)
     {
         if (IsInImage(mouseX, mouseY))
-            currentColor = imageData[mouseX + imageSizeX * mouseY];
+        {
+            if (clickAction == ClickAction.picker)
+                currentColor = imageData[mouseX + imageSizeX * mouseY];
+            else
+                currentAltColor = imageData[mouseX + imageSizeX * mouseY];
+        }
 
         UpdateToolbarIcons();
 
@@ -766,7 +772,7 @@ function Draw()
 
     if (IsInImage(mouseX, mouseY)) // Draw square around current pixel
     {
-        if (clickAction == ClickAction.picker || selectState == SelectState.firstPoint)
+        if (clickAction == ClickAction.picker || clickAction == ClickAction.altpicker || selectState == SelectState.firstPoint)
         {
             let [screenX, screenY] = PixelToScreen(mouseX, mouseY);
 

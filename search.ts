@@ -1,3 +1,8 @@
+
+let currentSearchResultUIs: HTMLElement[] = [];
+let currentSearchResultCommands: Command[] = [];
+let selectedSearchEntryIndex = -1;
+
 function OnSearchFocus()
 {
     UpdateSearchResults();
@@ -21,67 +26,93 @@ function OnSearchBlur()
 function OnSearchChange()
 {
     UpdateSearchResults();
+    selectedSearchEntryIndex = -1; // Reset selection
 }
 
 function OnSearchKey(event)
 {
+    if (selectedSearchEntryIndex > -1)
+    {
+        currentSearchResultUIs[selectedSearchEntryIndex].classList.remove("selected");
+    }
+
+    // Move selected
+    if (event.key == "ArrowUp" && selectedSearchEntryIndex < currentSearchResultUIs.length - 1)
+        selectedSearchEntryIndex++;
+    if (event.key == "ArrowDown" && selectedSearchEntryIndex > -1)
+        selectedSearchEntryIndex--;
+
+    if (selectedSearchEntryIndex > -1)
+    {
+        currentSearchResultUIs[selectedSearchEntryIndex].classList.add("selected");
+        mainInput.value = currentSearchResultCommands[selectedSearchEntryIndex].name + " ";
+
+        // Using setTimeout because cursor will be displayed incorrectly otherwise
+        setTimeout(() => mainInput.setSelectionRange(mainInput.value.length, mainInput.value.length), 0);
+    }
+
     if (event.key == "Enter")
     {
-        let values = mainInput.value.split(" ");
-        let command = GetCommandByName(values[0])
+        ParseCommand(mainInput.value);
+    }
+}
 
-        if (command == null)
-        {
-            infoLeft.textContent = "Invalid command name!"
-        }
-        else
-        {
-            let ok = true;
-            let parameter: any = null;
+function ParseCommand(content)
+{
+    let values = content.split(" ");
+    let command = GetCommandByName(values[0])
 
-            if (command.type != CommandType.function)
+    if (command == null)
+    {
+        infoLeft.textContent = "Invalid command name!"
+    }
+    else
+    {
+        let ok = true;
+        let parameter: any = null;
+
+        if (command.type != CommandType.function)
+        {
+            if (values.length < 2) 
             {
-                if (values.length < 2) 
+                infoLeft.textContent = "You need to specify an argument for this command! Example: commandname [argument]"
+                ok = false;
+            }
+            else
+            {
+                if (command.type == CommandType.int) [parameter, ok] = TryParseInt(values[1]);
+                if (command.type == CommandType.float) [parameter, ok] = TryParseFloat(values[1]);
+                if (command.type == CommandType.vec2)
                 {
-                    infoLeft.textContent = "You need to specify an argument for this command! Example: commandname [argument]"
-                    ok = false;
-                }
-                else
-                {
-                    if (command.type == CommandType.int) [parameter, ok] = TryParseInt(values[1]);
-                    if (command.type == CommandType.float) [parameter, ok] = TryParseFloat(values[1]);
-                    if (command.type == CommandType.vec2)
+                    if (values.length == 2) 
                     {
-                        if (values.length == 2) 
-                        {
-                            let val;
-                            [val, ok] = TryParseInt(values[1]);
-                            parameter = new vec2(val, val);
-                        }
-                        else if (values.length == 3)
-                        {
-                            let x, y;
-                            [x, ok] = TryParseInt(values[1]);
-                            [y, ok] = TryParseInt(values[2]);
-                            parameter = new vec2(x, y);
-                        }
-                        else 
-                        {
-                            infoLeft.textContent = "You need to specify a vector 2 argument for this command! Example: commandname [x] [y]"
-                            ok = false;
-                        }
+                        let val;
+                        [val, ok] = TryParseInt(values[1]);
+                        parameter = new vec2(val, val);
+                    }
+                    else if (values.length == 3)
+                    {
+                        let x, y;
+                        [x, ok] = TryParseInt(values[1]);
+                        [y, ok] = TryParseInt(values[2]);
+                        parameter = new vec2(x, y);
+                    }
+                    else 
+                    {
+                        infoLeft.textContent = "You need to specify a vector 2 argument for this command! Example: commandname [x] [y]"
+                        ok = false;
                     }
                 }
             }
-
-            if (ok)
-            {
-                command.Execute(parameter);
-            }
         }
-        
-        mainInput.blur();
+
+        if (ok)
+        {
+            command.Execute(parameter);
+        }
     }
+    
+    mainInput.blur();
 }
 
 function OnKeyPressed(event: KeyboardEvent)
@@ -137,10 +168,18 @@ function UpdateSearchResults()
         }
     }
 
+    currentSearchResultUIs = [];
+    currentSearchResultCommands = [];
+
     for (let i = settings.maxSearchResults - 1; i >= 0; i--)
     {
         if (i < sortList.length)
-            searchResults.appendChild(sortList[i].GetUI(i == 0));
+        {
+            let ui = sortList[i].GetUI(i == 0);
+            searchResults.appendChild(ui);
+            currentSearchResultUIs.unshift(ui);
+            currentSearchResultCommands.unshift(sortList[i]);
+        }
     }
 }
 

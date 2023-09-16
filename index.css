@@ -111,13 +111,9 @@ body {
     background-color: var(--bg-ll);
 }
 
-.search-entry:hover {
+.search-entry:hover, .search-entry.selected {
     background-color: var(--prim-d);
 }
-
-/* 
-.search-entry.highlight {
-} */
 
 .command-hotkey {
     position: absolute;

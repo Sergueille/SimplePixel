@@ -45,31 +45,36 @@ function ExportImage() {
             sizeY = maxY - minY + 1;
         }
     }
+    let upscaleFactor = parseInt(exportUpscaleInput.value);
+    if (isNaN(upscaleFactor))
+        upscaleFactor = 1;
+    if (upscaleFactor < 1)
+        upscaleFactor = 1;
     // Grid tiles
     if (exportTile.checked) {
         let i = 0;
         for (let x = 0; x <= imageSizeX - gridSizeX; x += gridSizeX) {
             for (let y = 0; y <= imageSizeY - gridSizeY; y += gridSizeY) {
                 if (!IsRectEmpty(x, gridSizeX, y, gridSizeY))
-                    ExportRect(x, gridSizeX, y, gridSizeY, i);
+                    ExportRect(x, gridSizeX, y, gridSizeY, i, upscaleFactor);
                 i++;
             }
         }
     }
     else {
-        ExportRect(startX, sizeX, startY, sizeY);
+        ExportRect(startX, sizeX, startY, sizeY, -1, upscaleFactor);
     }
     CloseExportPanel();
 }
-function ExportRect(startX, sizeX, startY, sizeY, number = -1) {
+function ExportRect(startX, sizeX, startY, sizeY, number = -1, upscaleFactor = 1) {
     let canvas = document.createElement("canvas");
-    canvas.width = sizeX;
-    canvas.height = sizeY;
+    canvas.width = sizeX * upscaleFactor;
+    canvas.height = sizeY * upscaleFactor;
     let ctx = canvas.getContext("2d");
     for (let x = 0; x < sizeX; x++) {
         for (let y = 0; y < sizeY; y++) {
             ctx.fillStyle = imageData[(x + startX) + imageSizeX * (y + startY)].GetHex();
-            ctx.fillRect(x, y, 1, 1);
+            ctx.fillRect(x * upscaleFactor, y * upscaleFactor, upscaleFactor, upscaleFactor);
         }
     }
     let mime = "";

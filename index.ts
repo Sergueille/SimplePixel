@@ -25,6 +25,7 @@ let exportFormatSelect = document.getElementById("export-format") as HTMLSelectE
 let exportCropAlpha = document.getElementById("export-crop") as HTMLInputElement;
 let exportTile = document.getElementById("export-tile") as HTMLInputElement;
 let exportFilename = document.getElementById("export-name") as HTMLInputElement;
+let exportUpscaleInput = document.getElementById("export-upscale") as HTMLInputElement;
 
 let recentPanel = document.getElementById("recent-panel")!!;
 let recentList = document.getElementById("recent-list")!!;
@@ -261,6 +262,11 @@ exportButton.addEventListener("click", () => {
 exportPanel.addEventListener("mousemove", () => {
     UpdateExportInputs();
 })
+
+exportUpscaleInput.addEventListener("input", ev => {
+    let val = parseInt(exportUpscaleInput.value);
+    exportUpscaleInput.classList.toggle("invalid", isNaN(val) || val < 1);
+});
 
 // History.ts
 clearBtn.addEventListener("click", () => {

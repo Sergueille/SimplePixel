@@ -23,6 +23,7 @@ let exportFormatSelect = document.getElementById("export-format");
 let exportCropAlpha = document.getElementById("export-crop");
 let exportTile = document.getElementById("export-tile");
 let exportFilename = document.getElementById("export-name");
+let exportUpscaleInput = document.getElementById("export-upscale");
 let recentPanel = document.getElementById("recent-panel");
 let recentList = document.getElementById("recent-list");
 let clearBtn = document.getElementById("clear-history-btn");
@@ -221,6 +222,10 @@ exportButton.addEventListener("click", () => {
 });
 exportPanel.addEventListener("mousemove", () => {
     UpdateExportInputs();
+});
+exportUpscaleInput.addEventListener("input", ev => {
+    let val = parseInt(exportUpscaleInput.value);
+    exportUpscaleInput.classList.toggle("invalid", isNaN(val) || val < 1);
 });
 // History.ts
 clearBtn.addEventListener("click", () => {

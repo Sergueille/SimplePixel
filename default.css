@@ -104,6 +104,10 @@ input[type="checkbox"]:hover::before, input[type="checkbox"]:focus-visible::befo
     background-color: var(--prim);
 }
 
+input.invalid, select.invalid {
+    box-shadow: var(--red) 0 0 0 var(--pixel);
+}
+
 *::selection {
     background-color: var(--prim);
 }
